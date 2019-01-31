@@ -11,10 +11,32 @@ Placeholder.
 ### Initial Setup
 First thing you need to do is edit the `EventFileLocation` inside `Config.py`. You can find the `EventFileLocation` of your keyboard by using the `cat` command on various event files inside `/dev/input/`. If you find one that spits out text every time you press a key, chances are that's the event file. Everything else can be left alone by default.
 
-### Adding Sound Files/Folders
-Inside of the `RootSoundFolder` (Default: Sound Files, configurable in `Config.py`), there is already a folder named `1 Example`. To add additional folders to be read by the soundboard, you make a folder that starts with a number, then you put the name with a space between the number and the name. Example, `5 Taunt Sounds`. There is currently a limit of 9 different folders. You must name them sequentially (starting at 1), or the soundboard will not find them. Example, with the folders `1 Foo`, `2 Bar`, `4 Yadda`, `5 Yeeda`, only `1 Foo` and `2 Bar` are going to be read. Note that the numbers indicate what order the folders will be in inside the soundboard. A properly placed folder will have a file structure similar to `RootSoundFolder/1 Foo/`, assuming `1 Foo` is the name of the folder you placed.
+### Adding Audio Files/Folders
+#### Folders
+Inside of the `RootSoundFolder` (Default: Sound Files, configurable in `Config.py`), there is already a folder named `1 Example`.
 
-To add audio files, you put them inside of a folder with a similar naming scheme. You have to start 1, and work your way up. Note that the number at the beginning of the audio file name will corrospond with the numpad key to play the audio file. There is a limit of 9 different audio files that can be assigned inside a single folder. Just like with the folders, you must name the audio files sequentially (starting at 1), or the soundboard will not find them. Example, with the audio files `1 Foo.wav`, `2 Bar.wav`, `4 Yadda.wav`, `5 Yeeda.wav`, only `1 Foo.wav` and `2 Bar.wav` are going to be read. A properly placed audio file will have a file structure similar to `RootSoundFolder/1 Foo/1 Bar.wav`, assuming `1 Foo` is the name of the folder and `1 Bar.wav` is the name of the audio file. Note, you can have whatever audio files that `paplay` is able to handle run (theoretically), but only Wave files have been tested so far.
+To add additional folders to be read by the soundboard, you make a folder that starts with a number, then you put the name with a space between the number and the name.
+
+Example, `5 Taunt Sounds`.
+
+There is currently a limit of 9 different folders. You must name them sequentially (starting at 1), or the soundboard will not find them.
+
+Example, with the folders `1 Foo`, `2 Bar`, `4 Yadda`, `5 Yeeda`, only `1 Foo` and `2 Bar` are going to be read. Note that the numbers indicate what order the folders will be in inside the soundboard.
+
+ A properly placed folder will have a file structure similar to `RootSoundFolder/1 Foo/`, assuming `1 Foo` is the name of the folder you placed.
+
+#### Audio Files
+To add audio files, you put them inside of a folder with a similar naming scheme. You have to start 1, and work your way up. Note that the number at the beginning of the audio file name will corrospond with the numpad key to play the audio file.
+
+There is a limit of 9 different audio files that can be assigned inside a single folder.
+
+Just like with the folders, you must name the audio files sequentially (starting at 1), or the soundboard will not find them.
+
+Example, with the audio files `1 Foo.wav`, `2 Bar.wav`, `4 Yadda.wav`, `5 Yeeda.wav`, only `1 Foo.wav` and `2 Bar.wav` are going to be read.
+
+A properly placed audio file will have a file structure similar to `RootSoundFolder/1 Foo/1 Bar.wav`, assuming `1 Foo` is the name of the folder and `1 Bar.wav` is the name of the audio file.
+
+Note, you can have whatever audio files that `paplay` is able to handle run (theoretically), but only Wave files have been tested so far.
 
 ### Running
 Run `Main.py` inside a terminal. Using Ubuntu 18.04, run `python3 Main.py` in the directory that `Main.py` is located in. Once you do that, it should be up and running.
