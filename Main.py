@@ -22,6 +22,13 @@ def main():
     Config.init()
     Globals.init()
     Globals.OS_DETECTED = DetectOS()
+
+    ''' If Windows is detected, enable ANSI escape stuff '''
+    if Globals.OS_DETECTED is 3:
+        import ctypes
+        kernel32 = ctypes.windll.kernel32
+        kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
+
     AudioPlayer.init()
     AudioPlayer.StartAudioController()
     FileExplorer.init()
