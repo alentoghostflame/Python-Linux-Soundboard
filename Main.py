@@ -13,10 +13,8 @@ import AudioPlayer
 import FileExplorer
 import DisplayController
 from Dictionaries import OS_DICT
-import yappi
 
 
-yappi.start
 def main():
     '''
     Initialized and runs all the various threads, then sleeps until a KeyboardInturrupt occurs.
