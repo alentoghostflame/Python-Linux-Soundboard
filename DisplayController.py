@@ -7,10 +7,7 @@ import Config
 
 def MoveCursorUp(Height):
     for i in range(Height):
-        if Globals.OS_DETECTED == 2 or Globals.OS_Detected == 4:
-            sys.stdout.write("\033[F")
-        elif Globals.OS_DETECTED == 1:
-            sys.stdout.write("\x1B\x41")
+        sys.stdout.write("\033[F")
 
 
 def StartDisplayController():
