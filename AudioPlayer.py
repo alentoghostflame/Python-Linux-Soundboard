@@ -13,9 +13,9 @@ def init():
     global AudioEndCommandArray
     global LoopbackEndCommandArray
 
-    AudioStartCommandText = """ pactl load-module module-null-sink sink_name=PythonAudioboardOutput sink_properties=device.description="Python_Audioboard_Output" rate=48000 """
-    AudioStartCommandArray = ["pactl", "load-module", "module-null-sink", "sink_name=PythonAudioboardOutput", """ sink_properties=device.description="Python_Audioboard_Output" """, "rate=48000"]
-    LoopbackStartCommandArray = ["pactl", "load-module", "module-loopback", "source=PythonAudioboardOutput.monitor"]
+    AudioStartCommandText = """ pactl load-module module-null-sink sink_name=PythonSoundboardOutput sink_properties=device.description="Python_Soundboard_Output" rate=48000 """
+    AudioStartCommandArray = ["pactl", "load-module", "module-null-sink", "sink_name=PythonSoundboardOutput", """ sink_properties=device.description="Python_Soundboard_Output" """, "rate=48000"]
+    LoopbackStartCommandArray = ["pactl", "load-module", "module-loopback", "source=PythonSoundboardOutput.monitor"]
     AudioEndCommandText = """ pactl unload-module module-null-sink """
     AudioEndCommandArray = ["pactl", "unload-module", "module-null-sink"]
     LoopbackEndCommandArray = ["pactl", "unload-module", "module-loopback"]
@@ -67,7 +67,7 @@ def AudioKeyDetection():
 
 
 def PlayAudioFile(pathtofile):
-    subprocess.call("paplay --device=PythonAudioboardOutput " + pathtofile, shell=True)
+    subprocess.call("paplay --device=PythonSoundboardOutput " + pathtofile, shell=True)
     return 0
 
 
