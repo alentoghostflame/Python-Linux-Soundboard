@@ -32,15 +32,11 @@ def main():
     StartKeyDetection()
     while Globals.EventBlocker is True:
         sleep(0.5)
-    AudioPlayer.init()
     AudioPlayer.StartAudioController()
     FileExplorer.init()
     FileExplorer.StartFileController()
     DisplayController.StartDisplayController()
     Globals.ReadyChecks.Main = True
-
-    # Begin starting up threads
-
     while True:
         sleep(1)
 
