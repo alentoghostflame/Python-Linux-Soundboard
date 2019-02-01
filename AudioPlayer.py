@@ -5,22 +5,6 @@ import Globals
 import Config
 
 
-def init():
-    global AudioStartCommandText
-    global AudioStartCommandArray
-    global LoopbackStartCommandArray
-    global AudioEndCommandText
-    global AudioEndCommandArray
-    global LoopbackEndCommandArray
-
-    AudioStartCommandText = """ pactl load-module module-null-sink sink_name=PythonSoundboardOutput sink_properties=device.description="Python_Soundboard_Output" rate=48000 """
-    AudioStartCommandArray = ["pactl", "load-module", "module-null-sink", "sink_name=PythonSoundboardOutput", """ sink_properties=device.description="Python_Soundboard_Output" """, "rate=48000"]
-    LoopbackStartCommandArray = ["pactl", "load-module", "module-loopback", "source=PythonSoundboardOutput.monitor", "latency_msec=5"]
-    AudioEndCommandText = """ pactl unload-module module-null-sink """
-    AudioEndCommandArray = ["pactl", "unload-module", "module-null-sink"]
-    LoopbackEndCommandArray = ["pactl", "unload-module", "module-loopback"]
-
-
 def StartAudioController():
     AudioController = threading.Thread(target=AudioLogic)
     AudioController.start()
@@ -72,13 +56,20 @@ def PlayAudioFile(pathtofile):
 
 
 def StartAudioSetup():
-    subprocess.call(AudioStartCommandText, shell=True)
-    subprocess.call(LoopbackStartCommandArray)
+    AudioStartCommand = """ pactl load-module module-null-sink sink_name=PythonSoundboardOutput sink_properties=device.description="Python_Soundboard_Output" rate=48000 """
+    subprocess.call(AudioStartCommand, shell=True)
+    LoopbackStartCommand = """ pactl load-module module-loopback source=PythonSoundboardOutput.monitor latency_msec=5 """
+    subprocess.call(LoopbackStartCommand, shell=True)
+    ''' If you have additional audio setup commands you want to run, place them between here and the end marker. '''
+
+    ''' End Marker '''
 
 
 def EndAudioSetup():
-    subprocess.call(AudioEndCommandArray)
-    subprocess.call(LoopbackEndCommandArray)
+    AudioEndCommand = """ pactl unload-module module-null-sink """
+    subprocess.call(AudioEndCommand, shell=True)
+    LoopbackEndCommand = """ pactl unload-module module-loopback """
+    subprocess.call(LoopbackEndCommand, shell=True)
 
 
 
