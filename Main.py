@@ -29,6 +29,9 @@ def main():
         kernel32 = ctypes.windll.kernel32
         kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
 
+    StartKeyDetection()
+    while Globals.EventBlocker is True:
+        sleep(0.5)
     AudioPlayer.init()
     AudioPlayer.StartAudioController()
     FileExplorer.init()
@@ -37,7 +40,7 @@ def main():
     Globals.ReadyChecks.Main = True
 
     # Begin starting up threads
-    StartKeyDetection()
+
     while True:
         sleep(1)
 

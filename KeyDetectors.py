@@ -40,6 +40,7 @@ def LinuxKeyDetection():
     except FileNotFoundError:
         # TODO: Make Error Handling for non-existent Event#
         pass
+    Globals.EventBlocker = False
 
     FORMAT = 'llHHI'
     EVENT_SIZE = struct.calcsize(FORMAT)

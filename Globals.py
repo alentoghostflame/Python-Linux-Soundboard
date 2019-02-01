@@ -11,11 +11,13 @@ def init():
     global ReadyChecks
     global FileTracker
     global OS_DETECTED
+    global EventBlocker
     KeyPressed = KeyPressedClass
     Quit = False
     ReadyChecks = ReadyChecksClass
     FileTracker = FileTrackerClass
     OS_DETECTED = 0
+    EventBlocker = True
 
 
 class KeyPressedClass:
