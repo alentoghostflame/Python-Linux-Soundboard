@@ -7,7 +7,6 @@ Main.py starts up the threads and tells them to shut down when need be. This is 
 from time import sleep
 import sys
 from Globals import global_variables
-import Globals
 import Config
 from Logger import *
 from KeyDetectors import StartKeyDetection
@@ -23,7 +22,6 @@ def main():
     '''
     Config.init()
     global_variables.misc.os_detected = DetectOS()
-    print(global_variables.input.key)
     global_variables.input.key = 5
     ''' If Windows is detected, enable ANSI escape stuff '''
     if global_variables.misc.os_detected is 3:

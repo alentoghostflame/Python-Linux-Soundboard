@@ -1,7 +1,6 @@
 import threading
 import subprocess
 from time import time, sleep
-import Globals
 from Globals import global_variables
 import Config
 from Logger import *
