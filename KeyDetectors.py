@@ -1,15 +1,16 @@
 import struct
 import os
 import threading
-import Globals
+from Globals import global_variables
 import Config
+from Logger import *
 from Dictionaries import KEY_CODES
 
 
 
 
 def StartKeyDetection():
-    temp = Globals.OS_DETECTED
+    temp = global_variables.misc.os_detected
     if temp == 1 or temp == 0:
         print("OS NOT FOUND")
     elif temp == 2:  # If Linux is found...
@@ -40,13 +41,13 @@ def LinuxKeyDetection():
     except FileNotFoundError:
         # TODO: Make Error Handling for non-existent Event#
         pass
-    Globals.EventBlocker = False
+    global_variables.misc.event_blocker = False
 
     FORMAT = 'llHHI'
     EVENT_SIZE = struct.calcsize(FORMAT)
 
     event = keyboardInput.read(EVENT_SIZE)
-    Globals.ReadyChecks.KeyDetector = True
+    global_variables.online.key_detector = True
 
     while event:
 
@@ -54,19 +55,19 @@ def LinuxKeyDetection():
 
         if (type != 0 or code != 0) and code != 4 and value == 1:
             # print("Event type %u, code %u, value %u at %d.%d" % (type, code, value, tv_sec, tv_usec))
-            if Globals.KeyPressed.WrittenTo == False:
-                Globals.KeyPressed.WrittenTo = True
-                Globals.KeyPressed.Key = KEY_CODES.get(code, 666)
-                if Globals.KeyPressed.Key == 666:
-                    Globals.KeyPressed.WrittenTo = False
+            if global_variables.input.write_ready == True:
+                global_variables.input.write_ready = False
+                global_variables.input.key = KEY_CODES.get(code, 666)
+                if global_variables.input.key == 666:
+                    global_variables.input.write_ready = True
         else:
             pass
 
         event = keyboardInput.read(EVENT_SIZE)
-        if Globals.Quit == True:
+        if global_variables.misc.quit == True:
             print("Key Detection Thread is OUT!")
             keyboardInput.close()
-            Globals.ReadyChecks.KeyDetector = False
+            global_variables.online.key_detector = False
             return 0
 
 

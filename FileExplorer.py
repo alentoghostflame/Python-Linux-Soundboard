@@ -1,8 +1,10 @@
 from os import listdir
 import threading
 from time import sleep, time
-import Globals
+from Globals import global_variables
 import Config
+from Logger import *
+
 
 
 def init():
@@ -12,7 +14,7 @@ def init():
 def StartFileController():
     FileController = threading.Thread(target=FileLogic)
     FileController.start()
-    Globals.ReadyChecks.FileController = True
+    global_variables.online.file_controller = True
 
 
 def FileLogic():
@@ -26,28 +28,28 @@ def FileLogic():
 
         ''' Index the Folders holding the sound files. '''
         IndexSoundFolders(Config.Config.RootSoundFolder)
-        Globals.FileTracker.FolderIndex = IndexItemName(Config.Config.RootSoundFolder)
+        global_variables.file.folder_index = IndexItemName(Config.Config.RootSoundFolder)
 
         ''' Detection for the + and - keys. '''
-        if Globals.KeyPressed.WrittenTo is True:
-            if Globals.KeyPressed.Key is 11:
-                Globals.KeyPressed.Page += 1
-                if Globals.KeyPressed.Page > Globals.FileTracker.TotalFolders:
-                    Globals.KeyPressed.Page = 1
-                Globals.KeyPressed.WrittenTo = False
-            elif Globals.KeyPressed.Key is 10:
-                Globals.KeyPressed.Page -= 1
-                if Globals.KeyPressed.Page < 1:
-                    Globals.KeyPressed.Page = Globals.FileTracker.TotalFolders
-                Globals.KeyPressed.WrittenTo = False
+        if global_variables.input.write_ready is False:
+            if global_variables.input.key is 11:
+                global_variables.input.page += 1
+                if global_variables.input.page > global_variables.file.total_folders:
+                    global_variables.input.page = 1
+                global_variables.input.write_ready = True
+            elif global_variables.input.key is 10:
+                global_variables.input.page -= 1
+                if global_variables.input.page < 1:
+                    global_variables.input.page = global_variables.file.total_folders
+                global_variables.input.write_ready = True
 
         ''' Index both the names and the paths of the audio files. '''
-        IndexSoundFiles(Globals.FileTracker.FolderPathIndex[(Globals.KeyPressed.Page - 1)])
-        Globals.FileTracker.FileIndex = IndexItemName(Globals.FileTracker.FolderPathIndex[(Globals.KeyPressed.Page - 1)])
+        IndexSoundFiles(global_variables.file.folder_path_index[(global_variables.input.page - 1)])
+        global_variables.file.file_index = IndexItemName(global_variables.file.folder_path_index[(global_variables.input.page - 1)])
 
-        if Globals.Quit == True:
+        if global_variables.misc.quit == True:
             print("File Controller Thread is OUT!")
-            Globals.ReadyChecks.FileController = False
+            global_variables.online.file_controller = False
             return
         ''' Tick limiter, to prevent the thread from running as fast as it can. '''
         EndLogic = time()
@@ -113,11 +115,11 @@ def IndexSoundFolders(FolderPath):
     :param FolderPath: Path to the folder to search inside of.
     '''
     Folders = IndexFolder(FolderPath)
-    Globals.FileTracker.FolderPathIndex = []
-    Globals.FileTracker.TotalFolders = 0
+    global_variables.file.folder_path_index = []
+    global_variables.file.total_folders = 0
     for Folder in Folders:
-        Globals.FileTracker.FolderPathIndex.append(FolderPath + "/" + Folder)
-        Globals.FileTracker.TotalFolders += 1
+        global_variables.file.folder_path_index.append(FolderPath + "/" + Folder)
+        global_variables.file.total_folders += 1
 
 
 def IndexSoundFiles(FolderPath):
@@ -127,9 +129,9 @@ def IndexSoundFiles(FolderPath):
     :param FolderPath: Path to the folder to search inside of
     '''
     Files = IndexFolder(FolderPath)
-    Globals.FileTracker.FilePathIndex = []
+    global_variables.file.file_path_index = []
     for File in Files:
         temp = FolderPath + "/" + File
         temp = temp.replace(" ", "\\ ")
-        Globals.FileTracker.FilePathIndex.append(temp)
+        global_variables.file.file_path_index.append(temp)
 

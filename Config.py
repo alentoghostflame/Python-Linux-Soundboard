@@ -27,6 +27,8 @@ class ConfigOptions:
     Increasing this will increase CPU usage. '''
     AudioPollingRate = 20
 
+    UseGui = False
+
 
 
 

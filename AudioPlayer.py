@@ -2,14 +2,16 @@ import threading
 import subprocess
 from time import time, sleep
 import Globals
+from Globals import global_variables
 import Config
+from Logger import *
+
 
 
 def StartAudioController():
     AudioController = threading.Thread(target=AudioLogic)
     AudioController.start()
-    Globals.ReadyChecks.Audio = True
-
+    global_variables.online.audio_controller = True
 
 
 def AudioLogic():
@@ -19,10 +21,10 @@ def AudioLogic():
 
         AudioKeyDetection()
 
-        if Globals.Quit is True:
+        if global_variables.misc.quit is True:
             EndAudioSetup()
             print("Audio Controller Thread is OUT!")
-            Globals.ReadyChecks.Audio = False
+            global_variables.online.audio_controller = False
             return
         ''' Tick limiter, to prevent the thread from running as fast as it can. '''
         EndLogic = time()
@@ -39,15 +41,15 @@ def AudioKeyDetection():
     :return:
     '''
 
-    if Globals.KeyPressed.WrittenTo is True and Globals.KeyPressed.Key is not 10 and Globals.KeyPressed.Key is not 11:
-        if Globals.KeyPressed.Key is 0:
-            Globals.KeyPressed.WrittenTo = False
-        elif Globals.KeyPressed.Key > 0 and Globals.KeyPressed.Key < 10:
-            if len(Globals.FileTracker.FilePathIndex) > Globals.KeyPressed.Key - 1:
-                AudioThread = threading.Thread(target=PlayAudioFile, args=(Globals.FileTracker.FilePathIndex[(Globals.KeyPressed.Key - 1)],))
+    if global_variables.input.write_ready is False and global_variables.input.key is not 10 and global_variables.input.key is not 11:
+        if global_variables.input.key is 0:
+            global_variables.input.write_ready = True
+        elif global_variables.input.key > 0 and global_variables.input.key < 10:
+            if len(global_variables.file.file_path_index) > global_variables.input.key - 1:
+                AudioThread = threading.Thread(target=PlayAudioFile, args=(global_variables.file.file_path_index[(global_variables.input.key - 1)],))
                 AudioThread.daemon = True
                 AudioThread.start()
-            Globals.KeyPressed.WrittenTo = False
+            global_variables.input.write_ready = True
 
 
 def PlayAudioFile(pathtofile):

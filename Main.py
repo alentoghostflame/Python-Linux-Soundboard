@@ -6,8 +6,10 @@ Main.py starts up the threads and tells them to shut down when need be. This is 
 """
 from time import sleep
 import sys
+from Globals import global_variables
 import Globals
 import Config
+from Logger import *
 from KeyDetectors import StartKeyDetection
 import AudioPlayer
 import FileExplorer
@@ -20,23 +22,23 @@ def main():
     Initialized and runs all the various threads, then sleeps until a KeyboardInturrupt occurs.
     '''
     Config.init()
-    Globals.init()
-    Globals.OS_DETECTED = DetectOS()
-
+    global_variables.misc.os_detected = DetectOS()
+    print(global_variables.input.key)
+    global_variables.input.key = 5
     ''' If Windows is detected, enable ANSI escape stuff '''
-    if Globals.OS_DETECTED is 3:
+    if global_variables.misc.os_detected is 3:
         import ctypes
         kernel32 = ctypes.windll.kernel32
         kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
 
     StartKeyDetection()
-    while Globals.EventBlocker is True:
+    while global_variables.misc.event_blocker is True:
         sleep(0.5)
     AudioPlayer.StartAudioController()
     FileExplorer.init()
     FileExplorer.StartFileController()
     DisplayController.StartDisplayController()
-    Globals.ReadyChecks.Main = True
+    global_variables.online.main = True
     while True:
         sleep(1)
 
@@ -51,7 +53,8 @@ try:
     '''
     main()
 except KeyboardInterrupt:
-    Globals.Quit = True
-    while Globals.ReadyChecks.KeyDetector is True or Globals.ReadyChecks.Display is True or Globals.ReadyChecks.Audio is True or Globals.ReadyChecks.FileController is True:
+    global_variables.misc.quit = True
+    while global_variables.online.key_detector is True or global_variables.online.display_controller is True or \
+            global_variables.online.audio_controller is True or global_variables.online.file_controller is True:
         sleep(0.5)
     print("All threads have quit, quitting!")

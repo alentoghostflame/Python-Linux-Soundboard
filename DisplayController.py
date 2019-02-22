@@ -1,8 +1,10 @@
 import sys
 import threading
 from time import sleep, time
-import Globals
+from Globals import global_variables
 import Config
+from Logger import *
+
 
 
 def MoveCursorUp(Height):
@@ -13,7 +15,7 @@ def MoveCursorUp(Height):
 def StartDisplayController():
     DisplayController = threading.Thread(target=DisplayLogic)
     DisplayController.start()
-    Globals.ReadyChecks.Display = True
+    global_variables.online.display_controller = True
 
 
 def DisplayLogic():
@@ -23,9 +25,9 @@ def DisplayLogic():
 
         DisplayFrame()
 
-        if Globals.Quit == True:
+        if global_variables.misc.quit == True:
             print("Display Controller Thread is OUT!")
-            Globals.ReadyChecks.Display = False
+            global_variables.online.display_controller = False
             return
         ''' Tick limiter, to prevent the thread from running as fast as it can. '''
         EndLogic = time()
@@ -35,25 +37,36 @@ def DisplayLogic():
 
 
 def DisplayFrame():
+    if Config.Config.UseGui is True:
+        DisplayFrameGui()
+    else:
+        DisplayFrameTerminal()
+
+
+def DisplayFrameGui():
+    pass
+
+
+def DisplayFrameTerminal():
     SongList = []
     temp = 0
-    RealSongLength = len(Globals.FileTracker.FileIndex)
+    RealSongLength = len(global_variables.file.file_index)
     while temp < 9:
         if temp < RealSongLength:
-            SongList.append(Globals.FileTracker.FileIndex[temp])
+            SongList.append(global_variables.file.file_index[temp])
         else:
             SongList.append("Empty")
         temp += 1
 
     print("■════════════════════════════════════■")
 
-    CurrentPage = Globals.KeyPressed.Page
-    MaxPages = Globals.FileTracker.TotalFolders
+    CurrentPage = global_variables.input.page
+    MaxPages = global_variables.file.total_folders
     temp = "- Page " + str(CurrentPage) + " of " + str(MaxPages) + " +"
     temp = '{:26}'.format(temp)
     print("║          ", temp, end="")
     print("║")
-    temp = '{:24}'.format(Globals.FileTracker.FolderIndex[CurrentPage - 1][:23])
+    temp = '{:24}'.format(global_variables.file.folder_index[CurrentPage - 1][:23])
     print("║            ", temp + "║")
     print("║                                     ║")
     temp1 = '{:8}'.format(SongList[6][:8])
