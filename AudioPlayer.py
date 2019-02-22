@@ -2,7 +2,7 @@ import threading
 import subprocess
 from time import time, sleep
 from Globals import global_variables
-import Config
+from Config import global_config
 from Logger import *
 
 
@@ -28,8 +28,8 @@ def AudioLogic():
         ''' Tick limiter, to prevent the thread from running as fast as it can. '''
         EndLogic = time()
         TimeDiff = EndLogic - StartLogic
-        if TimeDiff < Config.Config.AudioPollingRate:
-            sleep(Config.Config.AudioPollingRate - TimeDiff)
+        if TimeDiff < global_config.audio_polling_rate:
+            sleep(global_config.audio_polling_rate - TimeDiff)
 
 
 def AudioKeyDetection():

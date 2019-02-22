@@ -7,7 +7,6 @@ Main.py starts up the threads and tells them to shut down when need be. This is 
 from time import sleep
 import sys
 from Globals import global_variables
-import Config
 from Logger import *
 from KeyDetectors import StartKeyDetection
 import AudioPlayer
@@ -20,7 +19,6 @@ def main():
     '''
     Initialized and runs all the various threads, then sleeps until a KeyboardInturrupt occurs.
     '''
-    Config.init()
     global_variables.misc.os_detected = DetectOS()
     global_variables.input.key = 5
     ''' If Windows is detected, enable ANSI escape stuff '''

@@ -2,9 +2,8 @@ from os import listdir
 import threading
 from time import sleep, time
 from Globals import global_variables
-import Config
+from Config import global_config
 from Logger import *
-
 
 
 def init():
@@ -27,8 +26,8 @@ def FileLogic():
         StartLogic = time()  # Start Time for the File Polling Limit set in the config.
 
         ''' Index the Folders holding the sound files. '''
-        IndexSoundFolders(Config.Config.RootSoundFolder)
-        global_variables.file.folder_index = IndexItemName(Config.Config.RootSoundFolder)
+        IndexSoundFolders(global_config.root_sound_folder)
+        global_variables.file.folder_index = IndexItemName(global_config.root_sound_folder)
 
         ''' Detection for the + and - keys. '''
         if global_variables.input.write_ready is False:
@@ -54,8 +53,8 @@ def FileLogic():
         ''' Tick limiter, to prevent the thread from running as fast as it can. '''
         EndLogic = time()
         TimeDiff = EndLogic - StartLogic
-        if TimeDiff < Config.Config.FilePollingRate:
-            sleep(Config.Config.FilePollingRate - TimeDiff)
+        if TimeDiff < global_config.file_polling_rate:
+            sleep(global_config.file_polling_rate - TimeDiff)
 
 
 def IndexFolder(FolderPath):
