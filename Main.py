@@ -7,9 +7,9 @@ Main.py starts up the threads and tells them to shut down when need be. This is 
 from time import sleep
 import sys
 from Globals import global_variables
-from Logger import *
+from Logger import log, INFO, WARNING, ERROR
 from KeyDetectors import StartKeyDetection
-import AudioPlayer
+import AudioController
 import FileExplorer
 import DisplayController
 from Dictionaries import OS_DICT
@@ -30,7 +30,7 @@ def main():
     StartKeyDetection()
     while global_variables.misc.event_blocker is True:
         sleep(0.5)
-    AudioPlayer.StartAudioController()
+    AudioController.start_audio_controller()
     FileExplorer.init()
     FileExplorer.StartFileController()
     DisplayController.StartDisplayController()
