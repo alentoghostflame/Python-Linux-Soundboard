@@ -3,7 +3,7 @@ import threading
 from time import sleep, time
 from Globals import global_variables
 from Config import global_config
-from Logger import *
+from Logger import log, INFO, WARNING, ERROR
 
 
 def MoveCursorUp(Height):
