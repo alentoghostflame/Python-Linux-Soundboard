@@ -24,16 +24,29 @@ class GlobalConfigClass:
         (changing pages). Increasing this will increase CPU usage and Disk IO usage.
         '''
         self.file_polling_rate = 5
-        ''' SoundPollingRate (INT DEFAULT: 20) How many times per-second does the AudioPlayer check for commands given. 
-        Increasing this will increase CPU usage. '''
-        self.audio_polling_rate = 20
 
-        self.use_gui = False
+        self.use_gui = True
+
+        self.audio = AudioClass()
 
         ''' Initializes all the config options. User should not edit this '''
         self.display_polling_rate = 1 / self.display_polling_rate
         self.file_polling_rate = 1 / self.file_polling_rate
-        self.audio_polling_rate = 1 / self.audio_polling_rate
+
+
+class AudioClass:
+    def __init__(self):
+        ''' Audio related user-editable variables. '''
+
+        ''' polling_rate (INT DEFAULT: 1 / 20) How many times per-second does the AudioPlayer check for commands given. 
+            Increasing this will increase CPU usage, but make pressing keys to play audio files more responsive. '''
+        self.polling_rate = 1 / 20
+        ''' max_sound_threads (INT DEFAULT: 10) How many sound threads can be active at one time. Increasing this will
+        allow you to have more sounds running concurrently.'''
+        self.max_sound_threads = 10
+        ''' create_loopback (BOOLEAN DEFAULT: True) If the soundboard should create a loopback so the user can hear the
+        audio the soundboard plays.'''
+        self.create_loopback = True
 
 
 global_config = GlobalConfigClass()
