@@ -1,9 +1,7 @@
 from os import listdir
-import threading
-from time import sleep, time
 from Globals import global_variables
 from Config import global_config
-from Logger import log, INFO, WARNING, ERROR
+from Logger import log, INFO, WARNING  # , ERROR
 
 
 def refresh_files():
