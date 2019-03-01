@@ -1,12 +1,10 @@
-# import sys
-# import threading
 import tkinter as tk
-from time import sleep, time
+from time import sleep
 from Globals import global_variables
 import FileController
 from AudioController import audio_logic
 from Config import global_config
-from Logger import log, INFO, WARNING, ERROR
+from Logger import log, INFO, ERROR  # , WARNING
 
 
 def run_gui():
@@ -253,5 +251,3 @@ if global_config.use_gui is True:
     # Create the file list at coordinates 2, 1 and allow stretching
     file_list = FileListClass(2, 1, 15)
     window.columnconfigure(2, weight=1)
-
-
