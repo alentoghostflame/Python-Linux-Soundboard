@@ -4,7 +4,7 @@ import DisplayController
 from time import sleep
 from Globals import global_variables
 from Config import global_config
-from Logger import log, INFO, WARNING, ERROR
+# from Logger import log, INFO, WARNING, ERROR
 
 
 # Variables meant specifically for the Audio Controller
@@ -36,7 +36,6 @@ def audio_logic(input_folder_index, input_file_index):
         if global_config.audio.max_sound_threads > global_variables.audio.thread_count:
             good_file_path = fix_audio_path(file_paths[input_file_index])
             audio_thread = threading.Thread(target=play_audio_file, args=(good_file_path,))
-            # audio_thread.daemon = True
             audio_thread.start()
         else:
             pass
@@ -47,7 +46,6 @@ def audio_logic(input_folder_index, input_file_index):
 def play_audio_file(pathtofile):
     global_variables.audio.thread_count += 1
     DisplayController.frame_top.update_thread_count()
-    # subprocess.call("paplay --device=PythonSoundboardOutput " + pathtofile, shell=True, stdout=subprocess.PIPE)
     audio = subprocess.Popen("exec paplay --device=PythonSoundboardOutput " + pathtofile, shell=True, stdout=subprocess.PIPE)
 
     while audio.poll() is None:
