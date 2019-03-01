@@ -3,134 +3,80 @@ import threading
 from time import sleep, time
 from Globals import global_variables
 from Config import global_config
-from Logger import *
+from Logger import log, INFO, WARNING, ERROR
 
 
-def init():
-    pass
+def refresh_files():
+    log(INFO, "refresh_files", "Starting refresh.")
+    if global_variables.file.locked is False:
+        # First, lock and clear all folder names, file names, and file paths.
+        global_variables.file.locked = True
+        global_variables.file.folder_names.clear()
+        global_variables.file.file_names.clear()
+        global_variables.file.file_paths.clear()
+
+        # Get a list of folders, and add the names to folder_names.
+        folder_list = get_item_list(global_config.root_sound_folder)
+        for folder in folder_list:
+            global_variables.file.folder_names.append(folder)
+
+            # Get a list of files in the folder, add the name and path to seperate lists, and add the name list and path
+            # list to file_names and file_paths respectively.
+            file_list = get_item_list(global_config.root_sound_folder + "/" + folder)
+            pre_file_names = []
+            pre_file_paths = []
+            for file in file_list:
+                pre_file_names.append(file)
+                pre_file_paths.append(global_config.root_sound_folder + "/" + folder + "/" + file)
+            global_variables.file.file_names.append(pre_file_names)
+            global_variables.file.file_paths.append(pre_file_paths)
+
+        # Since the folder/file names/paths are no longer being written to, unlock them.
+        global_variables.file.locked = False
+        log(INFO, "refresh_files", "Ended refresh.")
+    else:
+        log(WARNING, "refresh_files", "Files are locked, is a refresh already occurring?")
 
 
-def StartFileController():
-    FileController = threading.Thread(target=FileLogic)
-    FileController.start()
-    global_variables.online.file_controller = True
+def get_prefix(input_string):
+    done = False
+    prefix_length = 0
+    prefix = None
+    while not done:
+        if input_string[prefix_length].isdigit() is True:
+            prefix_length += 1
+        else:
+            done = True
+    if input_string[prefix_length] is " ":
+        prefix = int(input_string[:prefix_length])
+    else:
+        pass
+    return prefix
 
 
-def FileLogic():
-    '''
-    This is the logic for the file explorer. It handles the + and - keys for changing pages (also known as folders) as
-    well as reading all the files. It reads the file paths as well as the file names, and puts them in
-    Globals.FileTracker.
-    '''
-    while True:
-        StartLogic = time()  # Start Time for the File Polling Limit set in the config.
+def get_item_list(root_folder):
+    pre_item_list = listdir(root_folder)
+    post_item_list = []
 
-        ''' Index the Folders holding the sound files. '''
-        IndexSoundFolders(global_config.root_sound_folder)
-        global_variables.file.folder_index = IndexItemName(global_config.root_sound_folder)
-
-        ''' Detection for the + and - keys. '''
-        if global_variables.input.write_ready is False:
-            if global_variables.input.key is 11:
-                global_variables.input.page += 1
-                if global_variables.input.page > global_variables.file.total_folders:
-                    global_variables.input.page = 1
-                global_variables.input.write_ready = True
-            elif global_variables.input.key is 10:
-                global_variables.input.page -= 1
-                if global_variables.input.page < 1:
-                    global_variables.input.page = global_variables.file.total_folders
-                global_variables.input.write_ready = True
-
-        ''' Index both the names and the paths of the audio files. '''
-        IndexSoundFiles(global_variables.file.folder_path_index[(global_variables.input.page - 1)])
-        global_variables.file.file_index = IndexItemName(global_variables.file.folder_path_index[(global_variables.input.page - 1)])
-
-        if global_variables.misc.quit == True:
-            print("File Controller Thread is OUT!")
-            global_variables.online.file_controller = False
-            return
-        ''' Tick limiter, to prevent the thread from running as fast as it can. '''
-        EndLogic = time()
-        TimeDiff = EndLogic - StartLogic
-        if TimeDiff < global_config.file_polling_rate:
-            sleep(global_config.file_polling_rate - TimeDiff)
-
-
-def IndexFolder(FolderPath):
-    ''' This function indexes the inside of a single folder. Returns a list of items (files or folders) inside the
-    folder that is searched. FolderPath is the path to the folder it searches inside of. Note, only grabs the NAME
-    of the items, and not the path.
-    :param FolderPath: Path to the folder to search inside of.
-    :return: A list of all the names of the items found.
-    '''
-    FolderItems = listdir(FolderPath)
-    Counter = 1
-    DoneYet = False
-    IndexFolder = []
-
-    while not DoneYet:
-        DoneYet = True
-        for Item in FolderItems:
-            try:
-                if eval(Item[0]) == Counter:
-                    Counter += 1
-                    DoneYet = False
-                    IndexFolder.append(Item)
-            except NameError:
+    # Get the count of all prefixes, in case there's a prefix-less item
+    prefix_count = 0
+    for item in pre_item_list:
+        prefix = get_prefix(item)
+        if prefix is None:
+            pass
+        else:
+            prefix_count += 1
+    # Add the folders in numeric order.
+    counter = 0
+    while len(post_item_list) < prefix_count:
+        for item in pre_item_list:
+            prefix = get_prefix(item)
+            if prefix is None:
                 pass
-    return IndexFolder
-
-
-def IndexItemName(FolderPath):
-    '''
-    Similar to IndexFolder(), but removes the number and whitespace prefix of the items found.
-    :param FolderPath: Path to the folder to search inside of.
-    :return: A list of all the names of the items found, with the first 2 characters removed.
-    '''
-    FolderItems = listdir(FolderPath)
-    Counter = 1
-    DoneYet = False
-    IndexFolder = []
-
-    while not DoneYet:
-        DoneYet = True
-        for Item in FolderItems:
-            temp = 0
-            try:
-                if eval(Item[0]) == Counter:
-                    Counter += 1
-                    DoneYet = False
-                    IndexFolder.append(Item[2:])
-            except NameError:
-                pass
-    return IndexFolder
-
-
-def IndexSoundFolders(FolderPath):
-    '''
-    Indexes the inside of the folder, and sets Globals.FileTracker.FolderPathIndex to the file path location of all
-    found folders relative to the script, and increases Globals.FileTracker.TotalFolders by 1 for each folder found.
-    :param FolderPath: Path to the folder to search inside of.
-    '''
-    Folders = IndexFolder(FolderPath)
-    global_variables.file.folder_path_index = []
-    global_variables.file.total_folders = 0
-    for Folder in Folders:
-        global_variables.file.folder_path_index.append(FolderPath + "/" + Folder)
-        global_variables.file.total_folders += 1
-
-
-def IndexSoundFiles(FolderPath):
-    '''
-    Indexes the inside of the folder, and sets Globals.FileTracker.FolderPathIndex to the file path location of all
-    found sound files relative to the script. Built for Linux, NOT for Windows.
-    :param FolderPath: Path to the folder to search inside of
-    '''
-    Files = IndexFolder(FolderPath)
-    global_variables.file.file_path_index = []
-    for File in Files:
-        temp = FolderPath + "/" + File
-        temp = temp.replace(" ", "\\ ")
-        global_variables.file.file_path_index.append(temp)
-
+            else:
+                if prefix == counter:
+                    post_item_list.append(item)
+                else:
+                    pass
+        counter += 1
+    return post_item_list
