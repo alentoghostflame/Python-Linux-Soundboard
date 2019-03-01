@@ -6,7 +6,7 @@ from time import time, sleep
 from Globals import global_variables
 from Config import global_config
 from AudioController import audio_logic
-from Logger import log, INFO, WARNING  # , ERROR
+from Logger import log, INFO  # , WARNING, ERROR
 from Dictionaries import KEY_CODES
 
 
