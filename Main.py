@@ -9,7 +9,7 @@ from time import sleep
 import sys
 from Globals import global_variables
 from Config import global_config
-from Logger import log, INFO, WARNING, ERROR
+from Logger import log, INFO  # , WARNING, ERROR
 import InputController
 import AudioController
 import FileController
