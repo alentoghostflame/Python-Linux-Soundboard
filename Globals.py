@@ -1,3 +1,4 @@
+from Config import global_config
 '''
 
 The file that contains all the storage locations that will be used in between threads.
@@ -17,6 +18,7 @@ class GlobalVariables:
         self.input = InputClass()
         self.online = OnlineClass()
         self.file = FileClass()
+        self.audio = AudioClass()
         self.misc = MiscClass()
 
 
@@ -34,8 +36,9 @@ class InputClass:
     '''
     def __init__(self):
         self.key = 666
-        self.page = 1
+        self.page = 0
         self.write_ready = True
+        self.event_file = global_config.event_file_location
 
 
 class OnlineClass:
@@ -50,6 +53,7 @@ class OnlineClass:
     def __init__(self):
         self.main = False
         self.key_detector = False
+        self.input_controller = False
         self.audio_controller = False
         self.file_controller = False
         self.display_controller = False
@@ -71,6 +75,23 @@ class FileClass:
         self.file_index = []
         self.file_path_index = []
 
+        # NEW STUFF
+        # folder_names: A list of strings whose index value corresponds to the folder name's number prefix.
+        self.folder_names = []
+        # file_names: A list of strings whose index value corresponds to the file name's number prefix.
+        self.file_names = []
+        # file_paths: A list of lists of strings. Each string is a path to a file. Each list's index number corresponds
+        # to the folder name's number prefix that the file is inside of.
+        self.file_paths = []
+        # locked: Tracks if the values above are being changed or not, and if they should be read or not.
+        self.locked = False
+
+
+class AudioClass:
+    def __init__(self):
+        self.thread_count = 0
+        self.kill_audio = False
+
 
 class MiscClass:
     '''
@@ -83,6 +104,7 @@ class MiscClass:
         self.quit = False
         self.os_detected = 0
         self.event_blocker = True
+
 
 
 global_variables = GlobalVariables()
