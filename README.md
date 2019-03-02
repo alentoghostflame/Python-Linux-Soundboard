@@ -1,7 +1,7 @@
 # Python-Linux-Soundboard
 I couldn't find any soundboards compatable with Linux that fit my standards, so I made my own that uses the numpad.
 
-![alt text](https://i.imgur.com/VJvxTBk.png "Screenshot")
+![alt text](https://i.imgur.com/OBjysfk.png "Screenshot")
 
 ## Requirments
 `Pulseaudio`, `TKinter`, and Python 3. The commands used in this are `pactl` and `paplay` to create an audio device and to stream audio to the audio device, and `Tkinter` is used to make the GUI. All this was written in Python 3. A soft requirement is `pavucontrol` to set an application to listen to the monitor of PythonSoundboardOutput (AKA PythonSoundboardOutput.monitor)
