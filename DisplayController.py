@@ -78,10 +78,10 @@ class FrameTopClass:
                 message_box.title("Error")
                 label_text = tk.Label(message_box, text="Permission error, attempt to resolve?")
                 label_text.grid(column=0, row=0, columnspan=2, padx=5, pady=5)
-                button_yes = tk.Button(message_box, text="YES", command=lambda: self.change_permission(input_path,
+                button_yes = tk.Button(message_box, text="Yes", command=lambda: self.change_permission(input_path,
                                                                                                        message_box))
                 button_yes.grid(column=0, row=1, padx=5, pady=5)
-                button_no = tk.Button(message_box, text="NO", command=message_box.destroy)
+                button_no = tk.Button(message_box, text="No", command=message_box.destroy)
                 button_no.grid(column=1, row=1, padx=5, pady=5)
             except FileNotFoundError:
                 message_box = tk.Toplevel(window)
@@ -94,8 +94,8 @@ class FrameTopClass:
                 global_config.event_file_location = input_path
                 message_box = tk.Toplevel(window)
                 message_box.title("Event file selected")
-                output_text = "Event file selected please do the following in Config.py to make choice persist:\n" \
-                              "Change 'self.event_file_location' from 'None' to '" + input_path + "'."
+                output_text = "Success!\n Please do the following in Config.py to make choice persist:\n" \
+                              "Change self.event_file_location from None to (quotes included): '" + input_path + "'."
                 label_text = tk.Label(message_box, text=output_text)
                 label_text.grid(column=0, row=0, padx=5, pady=5)
                 button_done = tk.Button(message_box, text="OK", command=message_box.destroy)
