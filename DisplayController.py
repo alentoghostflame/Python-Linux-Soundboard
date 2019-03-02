@@ -300,7 +300,7 @@ if global_config.use_gui is True:
     log(INFO, "DisplayController", "Initial GUI created.")
 
     log(INFO, "DisplayController", "Populating GUI.")
-    window.title("Linux Python Soundboard")
+    window.title("Python Linux Soundboard")
 
     # Create the top buttons
     frame_top = FrameTopClass()
