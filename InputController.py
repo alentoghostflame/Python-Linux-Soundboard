@@ -18,9 +18,10 @@ def start_input_controller():
     """
     temp = global_variables.misc.os_detected
     if temp is 2:  # Linux detected
-        log(INFO, "start_input_controller", "Starting Linux key detection!")
-        key_detector = threading.Thread(target=key_detection_linux)
-        key_detector.start()
+        # log(INFO, "start_input_controller", "Starting Linux key detection!")
+        # key_detector = threading.Thread(target=key_detection_linux)
+        # key_detector.start()
+        pass
     else:
         raise NotImplementedError
     log(INFO, "start_input_controller", "Starting input controller!")
@@ -65,7 +66,7 @@ def key_detection_linux():
     except FileNotFoundError:
         raise NotImplementedError
 
-    global_variables.misc.event_blocker = False
+    global_variables.misc.key_detection_started = True
 
     # These next 5 lines were taken from StackOverflow (kind of, made some modifications).
     jank_format = 'llHHI'
@@ -93,10 +94,25 @@ def key_detection_linux():
             return 0
 
 
+def event_file_checker(input_path):
+    event_file = open(input_path, "rb")
+    event_file.close()
+    return 0
+
+
 def input_controller():
+    """
+
+    :return: None
+    """
     global_variables.online.input_controller = True
     while True:
         start_of_logic = time()
+
+        if global_config.event_file_location is not None and global_variables.misc.key_detection_started is False:
+            log(INFO, "start_input_controller", "Starting Linux key detection!")
+            key_detector = threading.Thread(target=key_detection_linux)
+            key_detector.start()
 
         if global_variables.input.write_ready is False:
             key = global_variables.input.key

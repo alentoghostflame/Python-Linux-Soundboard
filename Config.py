@@ -10,8 +10,8 @@ class GlobalConfigClass:
         '''
         All the config options for the user to edit as they please. Should not be modified by the program AT ALL.
         '''
-        ''' EventFileLocation (STRING DEFAULT: /dev/input/event4) What event file to get keyboard inputs from. '''
-        self.event_file_location = "/dev/input/event4"
+        ''' EventFileLocation (DEFAULT: None) What event file to get keyboard inputs from. '''
+        self.event_file_location = None
         ''' RootSoundFolder (STRING DEFAULT: Sound Files) What the name of the root folder (located next to all the 
         python files) should be. Touching this should not cause issues, and will just change what sound folder is looked 
         into. Good for changing sound packs. '''

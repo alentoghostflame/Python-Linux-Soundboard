@@ -103,7 +103,7 @@ class MiscClass:
     def __init__(self):
         self.quit = False
         self.os_detected = 0
-        self.event_blocker = True
+        self.key_detection_started = False
 
 
 

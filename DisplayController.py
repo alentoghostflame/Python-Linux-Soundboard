@@ -2,6 +2,7 @@ import tkinter as tk
 from time import sleep
 from Globals import global_variables
 import FileController
+import InputController
 from AudioController import audio_logic
 from Config import global_config
 from Logger import log, INFO, ERROR  # , WARNING
@@ -23,17 +24,33 @@ class FrameTopClass:
         """
         # Create frame and place at top.
         self.frame = tk.Frame(window)
-        self.frame.grid(row=0, column=0, columnspan=3, padx=5, pady=5, sticky=tk.N + tk.E + tk.W)
+        self.frame.grid(column=0, row=0, columnspan=3, padx=5, pady=5, sticky=tk.N + tk.E + tk.W)
         self.frame.columnconfigure(0, weight=1)
 
+        self.button_frame = tk.Frame(self.frame)
+        self.button_frame.grid(column=0, row=0, sticky=tk.N + tk.W)
+
         # Create refresh files button.
-        self.button_refresh_files = tk.Button(self.frame, text="Refresh Files", command=self.refresh_files)
+        self.button_refresh_files = tk.Button(self.button_frame, text="Refresh Files", command=self.refresh_files)
         self.button_refresh_files.grid(column=0, row=0, padx=5, pady=5, sticky=tk.W)
+
+        # Create a use event file button.
+        self.button_use_event_file = tk.Button(self.button_frame, text="Use Event File", command=self.change_event_file)
+        self.button_use_event_file.grid(column=1, row=0, padx=5, pady=5, sticky=tk.W)
+
+        # Create a entry for entering the event file location
+        self.entry_event_file = tk.Entry(self.button_frame, bd=1, width=15)
+        self.entry_event_file.grid(column=2, row=0, padx=5, pady=5)
+        if global_config.event_file_location is None:
+            self.entry_event_file.insert(0, "/dev/input/event#")
+        else:
+            self.entry_event_file.insert(0, global_config.event_file_location)
+            self.entry_event_file.config(state=tk.DISABLED)
 
         # Create thread count label
         thread_text = "Audio Thread Count: 0 / " + str(global_config.audio.max_sound_threads)
         self.label_thread_count = tk.Label(self.frame, text=thread_text)
-        self.label_thread_count.grid(column=1, row=0, padx=5, pady=5, sticky=tk.E)
+        self.label_thread_count.grid(column=3, row=0, padx=5, pady=5, sticky=tk.E)
 
     # noinspection PyMethodMayBeStatic
     def refresh_files(self):
@@ -42,6 +59,54 @@ class FrameTopClass:
             folder_list.update()
             file_list.update(global_variables.input.page)
         pass
+
+    def change_event_file(self):
+        input_path = self.entry_event_file.get()
+        if input_path == global_config.event_file_location:
+            message_box = tk.Toplevel(window)
+            message_box.title("Error")
+            label_text = tk.Label(message_box, text="You are already using this event file!")
+            label_text.grid(column=0, row=0, padx=5, pady=5)
+            button_done = tk.Button(message_box, text="OK", command=message_box.destroy)
+            button_done.grid(column=0, row=1, padx=5, pady=5)
+        else:
+            returned_value = 666
+            try:
+                returned_value = InputController.event_file_checker(input_path)
+            except PermissionError:
+                message_box = tk.Toplevel(window)
+                message_box.title("Error")
+                label_text = tk.Label(message_box, text="Permission error, attempt to resolve?")
+                label_text.grid(column=0, row=0, columnspan=2, padx=5, pady=5)
+                button_yes = tk.Button(message_box, text="YES", command=lambda: self.change_permission(input_path,
+                                                                                                       message_box))
+                button_yes.grid(column=0, row=1, padx=5, pady=5)
+                button_no = tk.Button(message_box, text="NO", command=message_box.destroy)
+                button_no.grid(column=1, row=1, padx=5, pady=5)
+            except FileNotFoundError:
+                message_box = tk.Toplevel(window)
+                message_box.title("Error")
+                label_text = tk.Label(message_box, text="Event file not found!")
+                label_text.grid(column=0, row=0, padx=5, pady=5)
+                button_done = tk.Button(message_box, text="OK", command=message_box.destroy)
+                button_done.grid(column=0, row=1, padx=5, pady=5)
+            if returned_value is 0:
+                global_config.event_file_location = input_path
+                message_box = tk.Toplevel(window)
+                message_box.title("Event file selected")
+                output_text = "Event file selected please do the following in Config.py to make choice persist:\n" \
+                              "Change 'self.event_file_location' from 'None' to '" + input_path + "'."
+                label_text = tk.Label(message_box, text=output_text)
+                label_text.grid(column=0, row=0, padx=5, pady=5)
+                button_done = tk.Button(message_box, text="OK", command=message_box.destroy)
+                button_done.grid(column=0, row=1, padx=5, pady=5)
+                self.entry_event_file.config(state=tk.DISABLED)
+
+    # noinspection PyMethodMayBeStatic
+    def change_permission(self, input_path, message_box):
+        InputController.chown_event_file(input_path)
+        message_box.destroy()
+        self.change_event_file()
 
     def update_thread_count(self):
         thread_text = "Audio Thread Count: " + str(global_variables.audio.thread_count) + " / " + \

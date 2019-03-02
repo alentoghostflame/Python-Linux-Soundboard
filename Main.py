@@ -30,8 +30,6 @@ def main():
         kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)'''
 
     InputController.start_input_controller()
-    while global_variables.misc.event_blocker is True:
-        sleep(0.5)
 
     if global_config.use_gui is False:
         DisplayController.display_terminal_output()
