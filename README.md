@@ -8,23 +8,36 @@ I couldn't find any soundboards compatable with Linux that fit my standards, so 
 
 ## Quick Feature List
 * Supports multiple folders, and allows quickly changing between those folders.
-* Control the sounds played and folder selected via numpad keys.
-* Kill all outgoing audio via 0/Zero.
+* Control the sounds played and folder selected via numpad keys (If given an event file).
+* Multiple audio threads allowing for multiple different or same sounds to play at once!
+* Ability to instantly kill all audio threads.
 
-## How to get TKinter
-If on Ubuntu, do `sudo apt install python3-tk` to get TKinter for Python3. Else, use pip to install it.
+## No module named 'tkinter'!
+If on Ubuntu, do `sudo apt install python3-tk` to get TKinter for Python3. Else, use pip to install it or find instructions for your distribution.
 
-### Initial Setup
-First thing you need to do is edit the `EventFileLocation` inside `Config.py`. You can find the `EventFileLocation` of your keyboard by using the `cat` command on various event files inside `/dev/input/`. Example, `sudo cat /dev/input/event3`. If you find one that spits out text every time you press a key, chances are that's the event file. Everything else can be left alone by default.
+## How to...
+Small list of "How to do"'s, if you either have a question or found something that you think belongs here, make an issue for it and I'll probably add it!
 
-### Adding Audio Files/Folders
+### ...make numpad controls work?
+Find your event file for your keyboard. To do that, open up a terminal and run `sudo cat /dev/input/event#`, replacing `#` with a number (such as `1`), and press some keys on your keyboard. If stuff pops up every time you press a key, that's the event file you are looking for. If not, go to the next number.
+
+Once you have the path to the event file (ex: `/dev/input/event4`), open up the soundboard, enter it into the entry box at the top, and press "Use Event File". Follow the prompts and you should be good to go!
+
+Controls are as follows: Numbers 1 through 9 play the 1st through 9th sounds on the list to the right. + goes down/forward a folder, - goes up/back a folder. Folders are displayed in the list to the left. The number 0 will terminate all currently playing audio from the soundboard.
+
+### ...make applications listen to this?
+Not super hard. Using Pulseaudio Volume Control (pavucontrol) you can set the recording application of choice to listen to `PythonSoundboardOutput.monitor`. Doing that will cause the application to only be able to hear the soundboard.
+
+Don't have Pulseaudio Volume Control (pavucontrol)? On Ubuntu, do `sudo apt install pavucontrol` to install it.
+
+Don't want to use Pulseaudio Volume Control? Maybe my other github project will help you, the [Pulseaudio-Loopback-Tool.](https://github.com/alentoghostflame/Python-Pulseaudio-Loopback-Tool) If you use that, create a remapped source with `PythonSoundboardOutput.monitor`, and it should show up as an available mic inside applications.
+
+
+## Adding Audio Folders/Files
 #### Folders
 Inside of the `RootSoundFolder` (Default: Sound Files, configurable in `Config.py`), there is already a folder named `1 Example`.
 
-To add additional folders to be read by the soundboard, you make a folder that starts with a number, then you put the name with a space between the number and the name.
-
-Example, `5 Taunt Sounds`.
-Another example,`1 Foo`, `2 Bar`, `3 Yadda`, `4 Yeeda`.
+To add additional folders to be read by the soundboard, you make a folder that starts with a number, then you put the name with a space between the number and the name. Example, `5 Taunt Sounds`. Another example,`1 Foo`, `2 Bar`, `3 Yadda`, `4 Yeeda`.
 
 There is no limit to the maximum number of folders (theoretically).
 
@@ -42,16 +55,8 @@ Note, you can have whatever audio files that `paplay` is able to handle run (the
 ### Running
 Run `Main.py` inside a terminal. Using Ubuntu 18.04, run `python3 Main.py` in the directory that `Main.py` is located in. Once you do that, it should be up and running.
 
-### How to Actually Use
-1. Use whatever method you know to set an application to listen to the monitor of `PythonSoundboardOutput` (AKA `PythonSoundboardOutput.monitor`).
-  If you don't know how to do that and either can or have `pavucontrol` installed, read this.
-  1. install `pavucontrol` if you don't have it. If you do, run it.
-  2. Once ran, a window with various tabs on top should have popped up. What we are interested in is the Recording tab. Open that, and you should see at least 2 entries. 
-     - If the only entry you see is something that starts with `Loopback`, that means that no applications are attempting to record your microphone, but the soundboard is active. To fix that, get the application you want to use the soundboard on to attempt to record your microphone. On Discord for example, that means entering a voice room. Once you do that, an entry should pop up.
-     - If NO entires are there, that means the soundboard is either not running or something errored.
+## "I want ____" or "How do I do ____?"
 
-  3. Top right of the entry is a small box with something in it, probably the name of the currently plugged in microphone. Click on it, then switch it to `Monitor of Python_Soundboard_Output`.
-
-2. With that done, use the Numpad numbers to play the various audio files you assigned to them, and press the `+` and `-` keys to switch pages (AKA folders).
+If you have any questions, concerns, ideas, etc, make an issue for it! I'm all up for recommendations on how to make this better.
 
 
