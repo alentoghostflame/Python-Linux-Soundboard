@@ -35,20 +35,20 @@ Don't want to use Pulseaudio Volume Control? Maybe my other github project will 
 
 ## Adding Audio Folders/Files
 #### Folders
-Inside of the `RootSoundFolder` (Default: Sound Files, configurable in `Config.py`), there is already a folder named `1 Example`.
+Inside of the `root_sound_folder` (Default: Sound Files, configurable in `Config.ini`), there is already a folder named `1 Example`.
 
 To add additional folders to be read by the soundboard, you make a folder that starts with a number, then you put the name with a space between the number and the name. Example, `5 Taunt Sounds`. Another example,`1 Foo`, `2 Bar`, `3 Yadda`, `4 Yeeda`.
 
 There is no limit to the maximum number of folders (theoretically).
 
- A properly placed folder will have a file structure similar to `RootSoundFolder/1 Foo/`, assuming `1 Foo` is the name of the folder you placed.
+ A properly placed folder will have a file structure similar to `root_sound_folder/1 Foo/`, assuming `1 Foo` is the name of the folder you placed.
 
 #### Audio Files
 To add audio files, you put them inside of a folder with a similar naming scheme. Note that the number at the beginning of the audio file name wont corrospond with the numpad key to play the audio file if you skip numbers.
 
 There is no limit of audio files in a single folder (theoretically), but the buttons and numpad can only use the first 9.
 
-A properly placed audio file will have a file structure similar to `RootSoundFolder/1 Foo/1 Bar.wav`, assuming `1 Foo` is the name of the folder and `1 Bar.wav` is the name of the audio file.
+A properly placed audio file will have a file structure similar to `root_sound_folder/1 Foo/1 Bar.wav`, assuming `1 Foo` is the name of the folder and `1 Bar.wav` is the name of the audio file.
 
 Note, you can have whatever audio files that `paplay` is able to handle run (theoretically), but only `.wav` and `.ogg` files have been tested so far.
 
