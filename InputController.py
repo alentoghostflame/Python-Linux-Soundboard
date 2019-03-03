@@ -3,8 +3,7 @@ import threading
 import subprocess as sp
 from DisplayController import play_buttons
 from time import time, sleep
-from Globals import global_variables
-from Config import global_config
+from Globals import global_variables, global_config
 from AudioController import audio_logic
 from Logger import log, INFO  # , WARNING, ERROR
 from Dictionaries import KEY_CODES
@@ -59,10 +58,10 @@ def key_detection_linux():
     :return: None
     """
     try:
-        keyboard_input = open(global_config.event_file_location, "rb")
+        keyboard_input = open(global_config.audio.event_file_location, "rb")
     except PermissionError:
         chown_event_file(global_config.event_file_location)
-        keyboard_input = open(global_config.event_file_location, "rb")
+        keyboard_input = open(global_config.audio.event_file_location, "rb")
     except FileNotFoundError:
         raise NotImplementedError
 
@@ -109,7 +108,7 @@ def input_controller():
     while True:
         start_of_logic = time()
 
-        if global_config.event_file_location is not None and global_variables.misc.key_detection_started is False:
+        if global_config.audio.event_file_location is not None and global_variables.misc.key_detection_started is False:
             log(INFO, "start_input_controller", "Starting Linux key detection!")
             key_detector = threading.Thread(target=key_detection_linux)
             key_detector.start()

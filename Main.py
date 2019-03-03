@@ -7,8 +7,7 @@ Main.py starts up the threads and tells them to shut down when need be. This is 
 """
 from time import sleep
 import sys
-from Globals import global_variables
-from Config import global_config
+from Globals import global_variables, global_config
 from Logger import log, INFO  # , WARNING, ERROR
 import InputController
 import AudioController
@@ -31,7 +30,7 @@ def main():
 
     InputController.start_input_controller()
 
-    if global_config.use_gui is False:
+    if global_config.main.use_gui is False:
         DisplayController.display_terminal_output()
     else:
         DisplayController.run_gui()

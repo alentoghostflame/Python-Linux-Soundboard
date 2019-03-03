@@ -1,10 +1,9 @@
 import tkinter as tk
 from time import sleep
-from Globals import global_variables
+from Globals import global_variables, global_config
 import FileController
 import InputController
 from AudioController import audio_logic
-from Config import global_config
 from Logger import log, INFO, ERROR  # , WARNING
 
 
@@ -41,14 +40,14 @@ class FrameTopClass:
         # Create a entry for entering the event file location
         self.entry_event_file = tk.Entry(self.button_frame, bd=1, width=15)
         self.entry_event_file.grid(column=2, row=0, padx=5, pady=5)
-        if global_config.event_file_location is None:
+        if global_config.audio.event_file_location is None:
             self.entry_event_file.insert(0, "/dev/input/event#")
         else:
-            self.entry_event_file.insert(0, global_config.event_file_location)
+            self.entry_event_file.insert(0, global_config.audio.event_file_location)
             self.entry_event_file.config(state=tk.DISABLED)
 
         # Create thread count label
-        thread_text = "Audio Thread Count: 0 / " + str(global_config.audio.max_sound_threads)
+        thread_text = "Audio Thread Count: 0 / " + str(global_config.audio.max_audio_threads)
         self.label_thread_count = tk.Label(self.frame, text=thread_text)
         self.label_thread_count.grid(column=3, row=0, padx=5, pady=5, sticky=tk.E)
 
@@ -62,7 +61,7 @@ class FrameTopClass:
 
     def change_event_file(self):
         input_path = self.entry_event_file.get()
-        if input_path == global_config.event_file_location:
+        if input_path == global_config.audio.event_file_location:
             message_box = tk.Toplevel(window)
             message_box.title("Error")
             label_text = tk.Label(message_box, text="You are already using this event file!")
@@ -91,11 +90,11 @@ class FrameTopClass:
                 button_done = tk.Button(message_box, text="OK", command=message_box.destroy)
                 button_done.grid(column=0, row=1, padx=5, pady=5)
             if returned_value is 0:
-                global_config.event_file_location = input_path
+                global_config.audio.event_file_location = input_path
                 message_box = tk.Toplevel(window)
                 message_box.title("Event file selected")
-                output_text = "Success!\n Please do the following in Config.py to make choice persist:\n" \
-                              "Change self.event_file_location from None to (quotes included): '" + input_path + "'."
+                output_text = "Success!\n Please do the following in Config.ini to make choice persist:\n" \
+                              "Change event_file_location under [AUDIO] from None to: " + input_path + ""
                 label_text = tk.Label(message_box, text=output_text)
                 label_text.grid(column=0, row=0, padx=5, pady=5)
                 button_done = tk.Button(message_box, text="OK", command=message_box.destroy)
@@ -110,7 +109,7 @@ class FrameTopClass:
 
     def update_thread_count(self):
         thread_text = "Audio Thread Count: " + str(global_variables.audio.thread_count) + " / " + \
-                      str(global_config.audio.max_sound_threads)
+                      str(global_config.audio.max_audio_threads)
         try:
             self.label_thread_count.config(text=thread_text)
         except RuntimeError:
@@ -295,7 +294,7 @@ def display_terminal_output():
     raise NotImplementedError
 
 
-if global_config.use_gui is True:
+if global_config.main.use_gui is True:
     window = tk.Tk()
     log(INFO, "DisplayController", "Initial GUI created.")
 

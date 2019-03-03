@@ -2,9 +2,8 @@ import threading
 import subprocess
 import DisplayController
 from time import sleep
-from Globals import global_variables
-from Config import global_config
-# from Logger import log, INFO, WARNING, ERROR
+from Globals import global_variables, global_config
+from Logger import log, INFO, WARNING, ERROR
 
 
 # Variables meant specifically for the Audio Controller
@@ -33,7 +32,7 @@ def audio_logic(input_folder_index, input_file_index):
     """
     file_paths = global_variables.file.file_paths[input_folder_index]
     if len(file_paths) - 1 >= input_file_index:
-        if global_config.audio.max_sound_threads > global_variables.audio.thread_count:
+        if global_config.audio.max_audio_threads > global_variables.audio.thread_count:
             good_file_path = fix_audio_path(file_paths[input_file_index])
             audio_thread = threading.Thread(target=play_audio_file, args=(good_file_path,))
             audio_thread.start()
@@ -65,19 +64,25 @@ def start_audio_setup():
     sink_properties=device.description="Python_Soundboard_Output" rate=48000 """
     loopback_start_command = """ pactl load-module module-loopback source=PythonSoundboardOutput.monitor 
     latency_msec=5 """
-    subprocess.call(audio_start_command, shell=True)
+    log(INFO, "start_audio_setup", "Creating null sink.")
+    global_variables.audio.null_sink = eval(subprocess.check_output(audio_start_command, shell=True))
     if global_config.audio.create_loopback is True:
-        subprocess.call(loopback_start_command, shell=True)
+        log(INFO, "start_audio_setup", "Creating loopback.")
+        global_variables.audio.loopback = eval(subprocess.check_output(loopback_start_command, shell=True))
 
 
 def end_audio_setup():
+    log(INFO, "end_audio_setup", "Killing all running audio threads.")
     global_variables.audio.kill_audio = True
     sleep(global_config.audio.polling_rate)
     global_variables.audio.kill_audio = False
-    audio_end_command = """ pactl unload-module module-null-sink """
-    subprocess.call(audio_end_command, shell=True)
-    loopback_end_command = """ pactl unload-module module-loopback """
-    subprocess.call(loopback_end_command, shell=True)
+    if global_config.audio.create_loopback is True:
+        log(INFO, "end_audio_setup", "Removing loopback.")
+        subprocess.call("pactl unload-module " + str(global_variables.audio.loopback), shell=True)
+    log(INFO, "end_audio_setup", "Removing null sink.")
+    subprocess.call("pactl unload-module " + str(global_variables.audio.null_sink), shell=True)
+
+
 
 
 

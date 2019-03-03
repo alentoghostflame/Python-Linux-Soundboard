@@ -1,6 +1,5 @@
 from os import listdir
-from Globals import global_variables
-from Config import global_config
+from Globals import global_variables, global_config
 from Logger import log, INFO, WARNING  # , ERROR
 
 
@@ -14,18 +13,18 @@ def refresh_files():
         global_variables.file.file_paths.clear()
 
         # Get a list of folders, and add the names to folder_names.
-        folder_list = get_item_list(global_config.root_sound_folder)
+        folder_list = get_item_list(global_config.audio.root_sound_folder)
         for folder in folder_list:
             global_variables.file.folder_names.append(folder)
 
             # Get a list of files in the folder, add the name and path to seperate lists, and add the name list and path
             # list to file_names and file_paths respectively.
-            file_list = get_item_list(global_config.root_sound_folder + "/" + folder)
+            file_list = get_item_list(global_config.audio.root_sound_folder + "/" + folder)
             pre_file_names = []
             pre_file_paths = []
             for file in file_list:
                 pre_file_names.append(file)
-                pre_file_paths.append(global_config.root_sound_folder + "/" + folder + "/" + file)
+                pre_file_paths.append(global_config.audio.root_sound_folder + "/" + folder + "/" + file)
             global_variables.file.file_names.append(pre_file_names)
             global_variables.file.file_paths.append(pre_file_paths)
 
