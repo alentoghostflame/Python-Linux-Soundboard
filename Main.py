@@ -17,28 +17,15 @@ from Dictionaries import OS_DICT
 
 
 def main():
-    '''
-    Initialized and runs all the various threads, then sleeps until a KeyboardInterrupt occurs.
-    '''
-    global_variables.misc.os_detected = detect_os()
-
-    ''' If Windows is detected, enable ANSI escape stuff '''
-    '''if global_variables.misc.os_detected is 3:
-        import ctypes
-        kernel32 = ctypes.windll.kernel32
-        kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)'''
-
-    InputController.start_input_controller()
-
+    """
+    Go into a display loop until the display is canceled for whatever reason.
+    TKinter demands to have the window be run in the main thread, unfortunately.
+    """
+    global_variables.online.main = True
     if global_config.main.use_gui is False:
         DisplayController.display_terminal_output()
     else:
         DisplayController.run_gui()
-
-    global_variables.online.main = True
-
-    while True:
-        sleep(1)
 
 
 def detect_os():
@@ -46,19 +33,26 @@ def detect_os():
 
 
 try:
-    '''
-    The purpose of this try-except is to catch Keyboard Inturrupts and properly close down the threads.
-    '''
+    """
+    Have the file_controller initially read everything, the audio_controller startup the null-sink and loopback, the 
+    input_controller get inputs (if needed), and finally get the main thread in the display loop.
+    Once the window is closed, main will tell all the threads to stop 
+    """
     log(INFO, "main", "Beginning program execution.")
+    global_variables.misc.os_detected = detect_os()
     FileController.refresh_files()
     AudioController.start_audio_setup()
+    InputController.start_input_controller()
     main()
+    global_variables.misc.quit = True
+    AudioController.end_audio_setup()
+    while global_variables.online.key_detector is True or global_variables.online.input_controller is True:
+        sleep(0.5)
+    log(INFO, "main", "All threads have quit in some manner, quitting!")
+
 except KeyboardInterrupt:
     global_variables.misc.quit = True
-    while global_variables.online.key_detector is True or global_variables.online.display_controller is True or \
-            global_variables.online.audio_controller is True or global_variables.online.file_controller is True or \
-            global_variables.online.input_controller is True:
-        sleep(0.5)
-
     AudioController.end_audio_setup()
+    while global_variables.online.key_detector is True or global_variables.online.input_controller is True:
+        sleep(0.5)
     log(INFO, "main", "All threads have quit in some manner, quitting!")

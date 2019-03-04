@@ -13,8 +13,6 @@ def run_gui():
     window.mainloop()
     log(INFO, "create_gui", "GUI exited mainloop, shutting down!")
 
-    raise KeyboardInterrupt
-
 
 class FrameTopClass:
     def __init__(self):
@@ -100,8 +98,8 @@ class FrameTopClass:
                 button_done = tk.Button(message_box, text="OK", command=message_box.destroy)
                 button_done.grid(column=0, row=1, padx=5, pady=5)
                 self.entry_event_file.config(state=tk.DISABLED)
+                InputController.start_input_controller()
 
-    # noinspection PyMethodMayBeStatic
     def change_permission(self, input_path, message_box):
         InputController.chown_event_file(input_path)
         message_box.destroy()

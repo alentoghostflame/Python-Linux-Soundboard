@@ -54,9 +54,6 @@ class GlobalVariablesClass:
             self.main = False
             self.key_detector = False
             self.input_controller = False
-            self.audio_controller = False
-            self.file_controller = False
-            self.display_controller = False
 
     class FileClass:
         '''

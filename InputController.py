@@ -2,7 +2,7 @@ import struct
 import threading
 import subprocess as sp
 from DisplayController import play_buttons
-from time import time, sleep
+from time import sleep
 from Globals import global_variables, global_config
 from AudioController import audio_logic
 from Logger import log, INFO  # , WARNING, ERROR
@@ -15,17 +15,12 @@ def start_input_controller():
     NotImplementedError because other types are not implemented.
     :return: None
     """
-    temp = global_variables.misc.os_detected
-    if temp is 2:  # Linux detected
-        # log(INFO, "start_input_controller", "Starting Linux key detection!")
-        # key_detector = threading.Thread(target=key_detection_linux)
-        # key_detector.start()
-        pass
+    if global_config.audio.event_file_location is not None:
+        log(INFO, "start_input_controller", "Starting Linux key detection.")
+        key_detector = threading.Thread(target=key_detection_linux)
+        key_detector.start()
     else:
-        raise NotImplementedError
-    log(INFO, "start_input_controller", "Starting input controller!")
-    input_thread = threading.Thread(target=input_controller)
-    input_thread.start()
+        log(INFO, "start_input_controller", "event_file_location set to None, not starting.")
 
 
 def chown_event_file(event_file_path):
@@ -76,12 +71,11 @@ def key_detection_linux():
 
         if (type != 0 or code != 0) and code != 4 and value == 1:
             # print("Event type %u, code %u, value %u at %d.%d" % (type, code, value, tv_sec, tv_usec))
-            if global_variables.input.write_ready is True:
-                global_variables.input.key = KEY_CODES.get(code, 666)
-                if global_variables.input.key == 666:
-                    global_variables.input.write_ready = True
-                else:
-                    global_variables.input.write_ready = False
+            output_key = KEY_CODES.get(code, 666)
+            if output_key != 666:
+                input_logic(output_key)
+            else:
+                pass
         else:
             pass
         event = keyboard_input.read(event_size)
@@ -97,37 +91,6 @@ def event_file_checker(input_path):
     event_file = open(input_path, "rb")
     event_file.close()
     return 0
-
-
-def input_controller():
-    """
-
-    :return: None
-    """
-    global_variables.online.input_controller = True
-    while True:
-        start_of_logic = time()
-
-        if global_config.audio.event_file_location is not None and global_variables.misc.key_detection_started is False:
-            log(INFO, "start_input_controller", "Starting Linux key detection!")
-            key_detector = threading.Thread(target=key_detection_linux)
-            key_detector.start()
-
-        if global_variables.input.write_ready is False:
-            key = global_variables.input.key
-            input_logic(key)
-            global_variables.input.write_ready = True
-
-        if global_variables.misc.quit is True:
-            log(INFO, "input_controller", "Shutting down!")
-            global_variables.online.input_controller = False
-            return
-
-        ''' Tick limiter, to prevent the thread from running as fast as it can. '''
-        end_of_logic = time()
-        time_difference = end_of_logic - start_of_logic
-        if time_difference < global_config.input.polling_rate:
-            sleep(global_config.input.polling_rate - time_difference)
 
 
 def input_logic(input_key):
