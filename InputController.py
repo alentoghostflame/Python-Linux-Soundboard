@@ -15,7 +15,7 @@ def start_input_controller():
     NotImplementedError because other types are not implemented.
     :return: None
     """
-    if global_config.audio.event_file_location is not None:
+    if global_config.input.event_file_location is not None:
         log(INFO, "start_input_controller", "Starting Linux key detection.")
         key_detector = threading.Thread(target=key_detection_linux)
         key_detector.start()
@@ -53,10 +53,10 @@ def key_detection_linux():
     :return: None
     """
     try:
-        keyboard_input = open(global_config.audio.event_file_location, "rb")
+        keyboard_input = open(global_config.input.event_file_location, "rb")
     except PermissionError:
         chown_event_file(global_config.event_file_location)
-        keyboard_input = open(global_config.audio.event_file_location, "rb")
+        keyboard_input = open(global_config.input.event_file_location, "rb")
     except FileNotFoundError:
         raise NotImplementedError
 

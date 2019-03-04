@@ -39,7 +39,7 @@ class GlobalVariablesClass:
             self.key = 666
             self.page = 0
             self.write_ready = True
-            self.event_file = global_config.audio.event_file_location
+            self.event_file = global_config.input.event_file_location
 
     class OnlineClass:
         '''
@@ -97,8 +97,8 @@ class GlobalConfigClass:
         if isfile("Config.ini") is False:
             self.file_config["MAIN"] = {"use_gui": "True"}
             self.file_config["AUDIO"] = {"root_sound_folder": "Sound Files", "polling_rate": "1 / 20",
-                                         "max_audio_threads": "10", "event_file_location": "None", "create_loopback": "True"}
-            self.file_config["INPUT"] = {"polling_rate": "1 / 20"}
+                                         "max_audio_threads": "10", "create_loopback": "True"}
+            self.file_config["INPUT"] = {"event_file_location": "None"}
             with open("Config.ini", "w") as configfile:
                 self.file_config.write(configfile)
         else:
@@ -116,18 +116,16 @@ class GlobalConfigClass:
         def __init__(self, file_config):
             self.root_sound_folder = str(process_config_value(file_config, "AUDIO", "root_sound_folder", "Sound Files"))
             self.polling_rate = eval(process_config_value(file_config, "AUDIO", "polling_rate", 1 / 20))
-
             self.max_audio_threads = int(process_config_value(file_config, "AUDIO", "max_audio_threads", 10))
-            self.event_file_location = str(process_config_value(file_config, "AUDIO", "event_file_location", "None"))
-            if self.event_file_location == "None":
-                self.event_file_location = None
-            else:
-                pass
             self.create_loopback = eval(process_config_value(file_config, "AUDIO", "create_loopback", "True"))
 
     class InputClass:
         def __init__(self, file_config):
-            self.polling_rate = eval(process_config_value(file_config, "INPUT", "polling_rate", 1 / 20))
+            self.event_file_location = str(process_config_value(file_config, "INPUT", "event_file_location", "None"))
+            if self.event_file_location == "None":
+                self.event_file_location = None
+            else:
+                pass
 
 
 def process_config_value(file_config, input_category, input_variable, input_fallback):
