@@ -7,13 +7,19 @@ I couldn't find any soundboards compatable with Linux that fit my standards, so 
 `Pulseaudio`, `TKinter`, and Python 3. The commands used in this are `pactl` and `paplay` to create an audio device and to stream audio to the audio device, and `Tkinter` is used to make the GUI. All this was written in Python 3. A soft requirement is `pavucontrol` to set an application to listen to the monitor of PythonSoundboardOutput (AKA PythonSoundboardOutput.monitor)
 
 ## Quick Feature List
-* Supports multiple folders, and allows quickly changing between those folders.
-* Control the sounds played and folder selected via numpad keys (If given an event file).
+* Supports (theoretically) unlimited amounts of folders and (theoretically) unlimited amounts of audio files.
+* Use buttons on GUI to switch folders and play the first 9 audio files.
+* Click on the lists to switch folders and play any audio file.
+* Use numpad keys to switch folders and play sounds no matter what application you have selected! (If event file is given)
 * Multiple audio threads allowing for multiple different or same sounds to play at once!
-* Ability to instantly kill all audio threads.
+* Ability to instantly kill all outgoing audio.
 
-## No module named 'tkinter'!
-If on Ubuntu, do `sudo apt install python3-tk` to get TKinter for Python3. Else, use pip to install it or find instructions for your distribution.
+## How to run
+Two methods.
+
+A: double click on main.py and run it.
+
+B: Open up a terminal, navigate to the soundboard folder, and run `python3 main.py`
 
 ## How to...
 Small list of "How to do"'s, if you either have a question or found something that you think belongs here, make an issue for it and I'll probably add it!
@@ -32,28 +38,28 @@ Don't have Pulseaudio Volume Control (pavucontrol)? On Ubuntu, do `sudo apt inst
 
 Don't want to use Pulseaudio Volume Control? Maybe my other github project will help you, the [Pulseaudio-Loopback-Tool.](https://github.com/alentoghostflame/Python-Pulseaudio-Loopback-Tool) If you use that, create a remapped source with `PythonSoundboardOutput.monitor`, and it should show up as an available mic inside applications.
 
+### ...add more folders?
+Inside of the `root_sound_folder` (Default: Sound Files, configurable in `config.ini`), there is already a folder named `1 Example`. To add an additional folder, create a folder inside the `root_sound_folder` with a name that starts with a number and ends with whatever you want, with a space separating. For example, `25 Flood Gates` or `2 Domination Sounds`.
+The number that the folder is prefixed with will determine what order the folders are in inside the soundboard. For example, `25 Flood Gates` will come after `2 Domination Sounds`.
 
-## Adding Audio Folders/Files
-#### Folders
-Inside of the `root_sound_folder` (Default: Sound Files, configurable in `Config.ini`), there is already a folder named `1 Example`.
+There is (theoretically) no limit to how many different folders you can have.
 
-To add additional folders to be read by the soundboard, you make a folder that starts with a number, then you put the name with a space between the number and the name. Example, `5 Taunt Sounds`. Another example,`1 Foo`, `2 Bar`, `3 Yadda`, `4 Yeeda`.
+### ...add more audio files?
+Inside of `1 Example` (which is inside the `root_sound_folder` there is already a file called `1 Example.wav`. To add an additional audio file, copy the audio file to the folder of choice inside the `root_sound_folder`, and rename it to start with a number and end with whatever you want, with a space separating. For example, `5 Double Kill.wav` or `77 Country Roads.ogg`.
+The number that the file is prefixed with will determine what order the files are in inside the soundboard. For example, `77 Country Roads.ogg` will come after `5 Double Kill.wav`
 
-There is no limit to the maximum number of folders (theoretically).
+There is (theoretically) no limit to how many different audio files you have, but remember that the buttons on the GUI and the keypad can only play the first 9 audio files.
 
- A properly placed folder will have a file structure similar to `root_sound_folder/1 Foo/`, assuming `1 Foo` is the name of the folder you placed.
 
-#### Audio Files
-To add audio files, you put them inside of a folder with a similar naming scheme. Note that the number at the beginning of the audio file name wont corrospond with the numpad key to play the audio file if you skip numbers.
+## Something doesn't work!
+Well, if its not listed below here, submit an issue for it and it will get fixed as soon as possible!
 
-There is no limit of audio files in a single folder (theoretically), but the buttons and numpad can only use the first 9.
+### No module named 'tkinter'!
+If on Ubuntu, do `sudo apt install python3-tk` to get TKinter for Python3. Else, use pip to install it or find instructions for your distribution.
 
-A properly placed audio file will have a file structure similar to `root_sound_folder/1 Foo/1 Bar.wav`, assuming `1 Foo` is the name of the folder and `1 Bar.wav` is the name of the audio file.
+### My audio file doesnt play anything/console logs `Failed to open audio file`!
+Pulseaudio can't play every single type of audio file. The currently tested and working audio files are `.wav` and `.ogg`. There are methods online and offline to convert `.mp3` and other audio types to the supported ones.
 
-Note, you can have whatever audio files that `paplay` is able to handle run (theoretically), but only `.wav` and `.ogg` files have been tested so far.
-
-### Running
-Run `Main.py` inside a terminal. Using Ubuntu 18.04, run `python3 Main.py` in the directory that `Main.py` is located in. Once you do that, it should be up and running.
 
 ## "I want ____" or "How do I do ____?"
 
