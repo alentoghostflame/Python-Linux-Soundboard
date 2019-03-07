@@ -9,13 +9,10 @@ The file that contains all the storage locations that will be used in between th
 
 
 class GlobalVariablesClass:
-    '''
-    Used for easy communication between threads throughout the soundboard.
-    input: See InputClass.
-    online: See OnlineClass.
-    file: See FileClass.
-    misc: See MiscClass.
-    '''
+    """
+    Used for easy communication of variables between threads (if need be) without passing through insane amounts of
+    variables.
+    """
     def __init__(self):
         self.input = self.InputClass()
         self.online = self.OnlineClass()
@@ -24,41 +21,31 @@ class GlobalVariablesClass:
         self.misc = self.MiscClass()
 
     class InputClass:
-        '''
-        Holds information about input.
-        key: Integer representing the last key pressed, written to by the key_detector, read by the file_controller
-        and audio_controller.
-        page: Integer representing what page/folder the user wants to play sounds from, written to and read from by
-        the file_controller
-        write_ready: Holds a boolean representing what last wrote or read from key. If write_ready is True, that means that
-        the file_controller or audio_controller has processed key, and key_detector cannot write a new key. If write_ready
-        is False, that means key_detector can write a new value to key, and file_controller and audio_controller cannot read
-        key.
-        '''
+        """
+        page: Integer, holds the current index value for file.file_names and file.file_paths.
+        event_file_location: Holds either a string that is a path to a file, or None to indicate that there is no path.
+        key_detection_started: True if key detection is running, False if not.
+        """
         def __init__(self):
-            self.key = 666
             self.page = 0
-            self.write_ready = True
-            self.event_file = global_config.input.event_file_location
+            self.event_file_location = global_config.input.event_file_location
+            self.key_detection_started = False
 
     class OnlineClass:
-        '''
-        Holds information concerning the status of the threads.
-        main: Boolean representing if main is online or not.
-        key_detector: Boolean representing if the key_detector is online or not.
-        audio_controller: Boolean representing if the audio_controller is online or not.
-        file_controller: Boolean representing if the file_controller is online or not.
-        display_controller: Boolean representing if the display_controller is online or not.
-        '''
+        """
+        Holds information on the status of threads.
+        If True, than the thread is alive and ready.
+        False, its off or not ready.
+        """
         def __init__(self):
             self.main = False
             self.key_detector = False
             self.input_controller = False
 
     class FileClass:
-        '''
+        """
         Holds information concerning the file system.
-        '''
+        """
         def __init__(self):
 
             # folder_names: A list of strings whose index value corresponds to the folder name's number prefix.
@@ -79,22 +66,25 @@ class GlobalVariablesClass:
             self.loopback = 0
 
     class MiscClass:
-        '''
+        """
         Miscellaneous variables that don't quite fit in the above categories, or need a category of their own.
         quit: Boolean that represents if the program should quit or not. Written to by main, read by all threads.
-        os_detected: Integer that represents what operating system the host is running. See Dictionaries.OS_DICT for values,
-        event_blocker: Boolean the key_detector uses to delay main until the key_detector is online.
-        '''
+        """
         def __init__(self):
             self.quit = False
-            self.os_detected = 0
-            self.key_detection_started = False
 
 
 class GlobalConfigClass:
+    """
+    Reads config.ini and creates a globally accessible class file that has the relevant parameters and values specified
+    by config.ini
+    If a required parameter is missing from config.ini, use a default value.
+    If config.ini is missing, create a new one and use default values for everything.
+    """
     def __init__(self):
         self.file_config = cp.ConfigParser()
         if isfile("Config.ini") is False:
+            # If config.ini is missing, create a new one.
             self.file_config["MAIN"] = {"use_gui": "True"}
             self.file_config["AUDIO"] = {"root_sound_folder": "Sound Files", "polling_rate": "1 / 20",
                                          "max_audio_threads": "10", "create_loopback": "True"}
@@ -129,6 +119,15 @@ class GlobalConfigClass:
 
 
 def process_config_value(file_config, input_category, input_variable, input_fallback):
+    """
+    Attempt to read the config option specified with the variables and return it. If the config option is missing,
+    return the fallback instead.
+    :param file_config: The dictionary given by ConfigParser.
+    :param input_category: The overall category that the config option is in, ex [MAIN]
+    :param input_variable: The config option that is attempting to be read, ex use_gui
+    :param input_fallback: The fallback option that will be used if the config option is missing, ex True
+    :return: Either the value of the config option, or the value of input_fallback.
+    """
     if input_category in file_config and input_variable in file_config[input_category]:
         output = file_config[input_category][input_variable]
         log(INFO, "process_config_value", "Config value [" + input_category + "](" + input_variable + ") read as \"" +

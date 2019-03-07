@@ -4,11 +4,15 @@ from Globals import global_variables, global_config
 import FileController
 import InputController
 from AudioController import audio_logic
-from Logger import log, INFO, ERROR  # , WARNING
+from Logger import log, INFO, WARNING, ERROR
 
 
 def run_gui():
-
+    """
+    Easy way to get main to start running the mainloop while keeping it inside display_controller.
+    Make sure all the files are read and in place before the user can do anything, then start running the window proper.
+    :return: None
+    """
     frame_top.refresh_files()
     window.mainloop()
     log(INFO, "create_gui", "GUI exited mainloop, shutting down!")
@@ -17,7 +21,7 @@ def run_gui():
 class FrameTopClass:
     def __init__(self):
         """
-        This is where all the buttons on the top is created.
+        This is where everything on the top row is created.
         """
         # Create frame and place at top.
         self.frame = tk.Frame(window)
@@ -38,10 +42,10 @@ class FrameTopClass:
         # Create a entry for entering the event file location
         self.entry_event_file = tk.Entry(self.button_frame, bd=1, width=15)
         self.entry_event_file.grid(column=2, row=0, padx=5, pady=5)
-        if global_config.input.event_file_location is None:
+        if global_variables.input.event_file_location is None:
             self.entry_event_file.insert(0, "/dev/input/event#")
         else:
-            self.entry_event_file.insert(0, global_config.input.event_file_location)
+            self.entry_event_file.insert(0, global_variables.input.event_file_location)
             self.entry_event_file.config(state=tk.DISABLED)
 
         # Create thread count label
@@ -51,15 +55,27 @@ class FrameTopClass:
 
     # noinspection PyMethodMayBeStatic
     def refresh_files(self):
+        """
+        Have file_controller refresh the files, then have the folder_list and file_list update.
+        :return: None
+        """
         FileController.refresh_files()
         if global_variables.file.locked is False:
             folder_list.update()
             file_list.update(global_variables.input.page)
-        pass
 
     def change_event_file(self):
+        """
+        Create a popup window to help the user set the event file outside config.ini
+        If already using the exact same event file, inform user of that.
+        If there is a permission issue when accessing the file, inform the user and ask if it should attmept to resolve
+        it. If the user presses No, do nothing. If the user presses yes, attempt to resolve using change_permission.
+        If the file doesn't exist, Inform the user.
+        If successful in setting the event file, inform the user of it and tell them how to make the change permanent.
+        :return:
+        """
         input_path = self.entry_event_file.get()
-        if input_path == global_config.input.event_file_location:
+        if input_path == global_variables.input.event_file_location:
             message_box = tk.Toplevel(window)
             message_box.title("Error")
             label_text = tk.Label(message_box, text="You are already using this event file!")
@@ -88,7 +104,7 @@ class FrameTopClass:
                 button_done = tk.Button(message_box, text="OK", command=message_box.destroy)
                 button_done.grid(column=0, row=1, padx=5, pady=5)
             if returned_value is 0:
-                global_config.input.event_file_location = input_path
+                global_variables.input.event_file_location = input_path
                 message_box = tk.Toplevel(window)
                 message_box.title("Event file selected")
                 output_text = "Success!\n Please do the following in Config.ini to make choice persist:\n" \
@@ -101,11 +117,23 @@ class FrameTopClass:
                 InputController.start_input_controller()
 
     def change_permission(self, input_path, message_box):
+        """
+        Attempt to fix permissions of the event file via input_controller.chown_event_file.
+        Destroy the message box.
+        Relaunch change_event_file to hopefully have it work this time.
+        :param input_path: Path to event file
+        :param message_box: The message box this command is being used in.
+        :return:
+        """
         InputController.chown_event_file(input_path)
         message_box.destroy()
         self.change_event_file()
 
     def update_thread_count(self):
+        """
+        Update the visual thread count to reflect the thread counts from thread_count and max_audio_threads.
+        :return: None
+        """
         thread_text = "Audio Thread Count: " + str(global_variables.audio.thread_count) + " / " + \
                       str(global_config.audio.max_audio_threads)
         try:
@@ -147,16 +175,29 @@ class FolderListClass:
         self.listbox.config(xscrollcommand=self.scrollbar_horizontal.set)
 
     def listbox_select(self, dummy):
+        """
+        Set the page equal to the selection index, then update the file list with the new page.
+        :param dummy: Dummy variable, not used.
+        :return: None
+        """
         if len(self.listbox.curselection()) > 0:
-            index = self.listbox.curselection()[0]
-            global_variables.input.page = index
+            global_variables.input.page = self.listbox.curselection()[0]
             file_list.update(global_variables.input.page)
 
     def update(self):
+        """
+        Update with the names of all the folders.
+        :return: None
+        """
         output_list = global_variables.file.folder_names
         self.listbox_fill(output_list)
 
     def listbox_fill(self, input_list):
+        """
+        Quickly update the listbox with an input list. Each string in the list will be its own entry.
+        :param input_list: Input list to fill the listbox with.
+        :return: None
+        """
         self.listbox.delete(0, tk.END)
         for item in input_list:
             self.listbox.insert(tk.END, item)
@@ -214,6 +255,15 @@ class PlayButtonsClass:
             self.button.grid(column=placement[0], row=placement[1])
 
         def play_audio(self):
+            """
+            Used exclusively for the audio buttons.
+            Get what number the button is.
+            If the button is not 0, attempt to play an audio file determined by the current page and number of button
+            pressed.
+            Else if the button is 0, kill all running audio processes.
+            Else, do nothing as nothing should hit the else.
+            :return: None
+            """
             if self.number is not 0:
                 audio_logic(global_variables.input.page, self.number - 1)
             elif self.number is 0:
@@ -221,10 +271,17 @@ class PlayButtonsClass:
                 sleep(global_config.audio.polling_rate)
                 global_variables.audio.kill_audio = False
             else:
+                log(WARNING, "play_audio", "Invalid button \"" + self.number + "\" attempted to play a sound?")
                 pass
 
     # noinspection PyMethodMayBeStatic
     def back_page(self):
+        """
+        Decrement the page by one.
+        If that makes the page number less than one, reset it to the highest valid value. This essentially makes a
+        wrap-around effect.
+        :return: None
+        """
         global_variables.input.page -= 1
         if global_variables.input.page < 0:
             global_variables.input.page = len(global_variables.file.folder_names) - 1
@@ -233,6 +290,12 @@ class PlayButtonsClass:
 
     # noinspection PyMethodMayBeStatic
     def forward_page(self):
+        """
+        Increment the page by one.
+        If that makes the page number greater than the highest valid value, reset it to 0. This essentially makes a
+        wrap-around effect.
+        :return:
+        """
         global_variables.input.page += 1
         if global_variables.input.page >= len(global_variables.file.folder_names):
             global_variables.input.page = 0
@@ -273,26 +336,49 @@ class FileListClass:
         self.listbox.config(xscrollcommand=self.scrollbar_horizontal.set)
 
     def listbox_select(self, dummy):
+        """
+        Attempt to play the audio file selected in the listbox.
+        :param dummy: Dummy variable, not used.
+        :return: None
+        """
         if len(self.listbox.curselection()) > 0:
             index = self.listbox.curselection()[0]
             audio_logic(global_variables.input.page, index)
 
     def update(self, input_page):
+        """
+        Updates the list of file names in the listbox to match a given page.
+        :param input_page: Integer representing a valid index value in file_names.
+        :return:
+        """
         output_list = global_variables.file.file_names[input_page]
         self.listbox_fill(output_list)
 
     def listbox_fill(self, input_list):
+        """
+        Quickly update the listbox with an input list. Each string in the list will be its own entry.
+        :param input_list: Input list to fill the listbox with.
+        :return: None
+        """
         self.listbox.delete(0, tk.END)
         for item in input_list:
             self.listbox.insert(tk.END, item)
 
 
 def display_terminal_output():
-    log(ERROR, "display_terminal_output", "NO TERMINAL OUTPUT SUPPORTED, SWITCH Config.use_gui FROM False TO True!")
+    """
+    Function to display_terminal_outout. Because this is not implemented, log an error and raise an exception.
+    :return: None
+    """
+    log(ERROR, "display_terminal_output", "NO TERMINAL OUTPUT SUPPORTED, SWITCH use_gui IN Config.ini FROM False TO "
+                                          "True!")
     raise NotImplementedError
 
 
 if global_config.main.use_gui is True:
+    """
+    If the use_gui value is True, setup the GUI to let the main thread run it.
+    """
     window = tk.Tk()
     log(INFO, "DisplayController", "Initial GUI created.")
 

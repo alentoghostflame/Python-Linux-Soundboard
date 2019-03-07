@@ -4,6 +4,16 @@ from Logger import log, INFO, WARNING  # , ERROR
 
 
 def refresh_files():
+    """
+    If locked is False, set locked to True and clear the lists to be modified. Next, get a list
+    of folders. Run through the entire folder_list to add the name of the folder to folder_names and get a list of
+    files in that folder. Go through the entire file_list and append the name and path to pre_file_names and
+    pre_file_paths respectively. Once done with that, append pre_file_names to file_names, and pre_file_paths to
+    file_paths. Then set locked to False.
+
+    Else, log a warning and do nothing else.
+    :return: None
+    """
     log(INFO, "refresh_files", "Starting refresh.")
     if global_variables.file.locked is False:
         # First, lock and clear all folder names, file names, and file paths.
@@ -17,7 +27,7 @@ def refresh_files():
         for folder in folder_list:
             global_variables.file.folder_names.append(folder)
 
-            # Get a list of files in the folder, add the name and path to seperate lists, and add the name list and path
+            # Get a list of files in the folder, add the name and path to separate lists, and add the name list and path
             # list to file_names and file_paths respectively.
             file_list = get_item_list(global_config.audio.root_sound_folder + "/" + folder)
             pre_file_names = []
@@ -36,6 +46,12 @@ def refresh_files():
 
 
 def get_prefix(input_string):
+    """
+    Get how many digits are at the beginning of a string.
+    Get those digits from the beginning of the string as an int.
+    :param input_string: A string, preferably starting with a number and ending with a word seperated by a space.
+    :return: Either an integer that matches the prefix of the string, or None to indicate no prefix.
+    """
     done = False
     prefix_length = 0
     prefix = None
@@ -52,6 +68,12 @@ def get_prefix(input_string):
 
 
 def get_item_list(root_folder):
+    """
+    Get how many items have a prefix.
+    Add items to a list in prefix order.
+    :param root_folder: Folder path that needs to be searched through.
+    :return: A list of items sorted by their prefixes.
+    """
     pre_item_list = listdir(root_folder)
     post_item_list = []
 
@@ -59,9 +81,7 @@ def get_item_list(root_folder):
     prefix_count = 0
     for item in pre_item_list:
         prefix = get_prefix(item)
-        if prefix is None:
-            pass
-        else:
+        if prefix is not None:
             prefix_count += 1
     # Add the folders in numeric order.
     counter = 0
