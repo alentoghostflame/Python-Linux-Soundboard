@@ -1,10 +1,10 @@
 import tkinter as tk
 from time import sleep
-from Globals import global_variables, global_config
-import FileController
-import InputController
-from AudioController import audio_logic
-from Logger import log, INFO, WARNING, ERROR
+from globals import global_variables, global_config
+import file_controller
+import input_controller
+from audio_controller import audio_logic
+from logger import log, INFO, WARNING, ERROR
 
 
 def run_gui():
@@ -59,7 +59,7 @@ class FrameTopClass:
         Have file_controller refresh the files, then have the folder_list and file_list update.
         :return: None
         """
-        FileController.refresh_files()
+        file_controller.refresh_files()
         if global_variables.file.locked is False:
             folder_list.update()
             file_list.update(global_variables.input.page)
@@ -85,7 +85,7 @@ class FrameTopClass:
         else:
             returned_value = 666
             try:
-                returned_value = InputController.event_file_checker(input_path)
+                returned_value = input_controller.event_file_checker(input_path)
             except PermissionError:
                 message_box = tk.Toplevel(window)
                 message_box.title("Error")
@@ -114,7 +114,7 @@ class FrameTopClass:
                 button_done = tk.Button(message_box, text="OK", command=message_box.destroy)
                 button_done.grid(column=0, row=1, padx=5, pady=5)
                 self.entry_event_file.config(state=tk.DISABLED)
-                InputController.start_input_controller()
+                input_controller.start_input_controller()
 
     def change_permission(self, input_path, message_box):
         """
@@ -125,7 +125,7 @@ class FrameTopClass:
         :param message_box: The message box this command is being used in.
         :return:
         """
-        InputController.chown_event_file(input_path)
+        input_controller.chown_event_file(input_path)
         message_box.destroy()
         self.change_event_file()
 

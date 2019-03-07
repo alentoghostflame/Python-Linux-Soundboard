@@ -1,12 +1,12 @@
 import struct
 import threading
 import subprocess as sp
-from DisplayController import play_buttons
+from display_controller import play_buttons
 from time import sleep
-from Globals import global_variables, global_config
-from AudioController import audio_logic
-from Logger import log, INFO, WARNING, ERROR
-from Dictionaries import KEY_CODES
+from globals import global_variables, global_config
+from audio_controller import audio_logic
+from logger import log, INFO, WARNING, ERROR
+from dictionaries import KEY_CODES
 
 
 def start_input_controller():

@@ -1,9 +1,9 @@
 import threading
 import subprocess
-import DisplayController
+import display_controller
 from time import sleep
-from Globals import global_variables, global_config
-from Logger import log, INFO  # , WARNING, ERROR
+from globals import global_variables, global_config
+from logger import log, INFO  # , WARNING, ERROR
 
 
 def fix_audio_path(input_path):
@@ -52,7 +52,7 @@ def play_audio_file(path_to_file):
     :return: 0
     """
     global_variables.audio.thread_count += 1
-    DisplayController.frame_top.update_thread_count()
+    display_controller.frame_top.update_thread_count()
     audio = subprocess.Popen("exec paplay --device=PythonSoundboardOutput " + path_to_file, shell=True,
                              stdout=subprocess.PIPE)
 
@@ -64,7 +64,7 @@ def play_audio_file(path_to_file):
             sleep(global_config.audio.polling_rate)
 
     global_variables.audio.thread_count -= 1
-    DisplayController.frame_top.update_thread_count()
+    display_controller.frame_top.update_thread_count()
     return 0
 
 
@@ -104,9 +104,3 @@ def end_audio_setup():
         subprocess.call("pactl unload-module " + str(global_variables.audio.loopback), shell=True)
     log(INFO, "end_audio_setup", "Removing null sink.")
     subprocess.call("pactl unload-module " + str(global_variables.audio.null_sink), shell=True)
-
-
-
-
-
-

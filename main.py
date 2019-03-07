@@ -6,11 +6,11 @@ Main.py starts up the program and tells the various parts of it to shutdown when
 
 """
 from time import sleep
-from Globals import global_variables, global_config
-from Logger import log, INFO, WARNING, ERROR
-import InputController
-import AudioController
-import DisplayController
+from globals import global_variables, global_config
+from logger import log, INFO, WARNING, ERROR
+import input_controller
+import audio_controller
+import display_controller
 
 
 def main():
@@ -20,9 +20,9 @@ def main():
     """
     global_variables.online.main = True
     if global_config.main.use_gui is False:
-        DisplayController.display_terminal_output()
+        display_controller.display_terminal_output()
     else:
-        DisplayController.run_gui()
+        display_controller.run_gui()
 
 
 try:
@@ -33,11 +33,11 @@ try:
     """
     log(INFO, "main", "Beginning program execution.")
     # global_variables.misc.os_detected = detect_os()
-    AudioController.start_audio_setup()
-    InputController.start_input_controller()
+    audio_controller.start_audio_setup()
+    input_controller.start_input_controller()
     main()
     global_variables.misc.quit = True
-    AudioController.end_audio_setup()
+    audio_controller.end_audio_setup()
     while global_variables.online.key_detector is True or global_variables.online.input_controller is True:
         sleep(0.5)
     log(INFO, "main", "All threads have quit in some manner, quitting!")
@@ -45,7 +45,7 @@ try:
 except KeyboardInterrupt:
     # If a keyboard interrupt is done for some reason, kill threads, null-sink, and loopback.
     global_variables.misc.quit = True
-    AudioController.end_audio_setup()
+    audio_controller.end_audio_setup()
     while global_variables.online.key_detector is True or global_variables.online.input_controller is True:
         sleep(0.5)
     log(INFO, "main", "All threads have quit in some manner, quitting!")

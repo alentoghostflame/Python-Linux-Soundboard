@@ -1,6 +1,6 @@
 import configparser as cp
 from os.path import isfile
-from Logger import log, INFO  # , WARNING, ERROR
+from logger import log, INFO  # , WARNING, ERROR
 '''
 
 The file that contains all the storage locations that will be used in between threads.
@@ -83,16 +83,18 @@ class GlobalConfigClass:
     """
     def __init__(self):
         self.file_config = cp.ConfigParser()
-        if isfile("Config.ini") is False:
+        if isfile("config.ini") is False:
             # If config.ini is missing, create a new one.
+            log(INFO, "GlobalConfigClass", "config.ini missing, creating a new one.")
             self.file_config["MAIN"] = {"use_gui": "True"}
             self.file_config["AUDIO"] = {"root_sound_folder": "Sound Files", "polling_rate": "1 / 20",
                                          "max_audio_threads": "10", "create_loopback": "True"}
             self.file_config["INPUT"] = {"event_file_location": "None"}
-            with open("Config.ini", "w") as configfile:
+            with open("config.ini", "w") as configfile:
                 self.file_config.write(configfile)
         else:
-            self.file_config.read("Config.ini")
+            log(INFO, "GlobalConfigClass", "Reading config.ini")
+            self.file_config.read("config.ini")
 
         self.main = self.MainClass(self.file_config)
         self.audio = self.AudioClass(self.file_config)
@@ -105,8 +107,8 @@ class GlobalConfigClass:
     class AudioClass:
         def __init__(self, file_config):
             self.root_sound_folder = str(process_config_value(file_config, "AUDIO", "root_sound_folder", "Sound Files"))
-            self.polling_rate = eval(process_config_value(file_config, "AUDIO", "polling_rate", 1 / 20))
-            self.max_audio_threads = int(process_config_value(file_config, "AUDIO", "max_audio_threads", 10))
+            self.polling_rate = eval(process_config_value(file_config, "AUDIO", "polling_rate", "1 / 20"))
+            self.max_audio_threads = int(process_config_value(file_config, "AUDIO", "max_audio_threads", "10"))
             self.create_loopback = eval(process_config_value(file_config, "AUDIO", "create_loopback", "True"))
 
     class InputClass:
