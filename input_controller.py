@@ -61,6 +61,7 @@ def key_detection():
         raise NotImplementedError
 
     global_variables.input.key_detection_started = True
+    global_variables.online.key_detector = True
 
     # These next 5 lines were taken from StackOverflow (kind of, made some modifications).
     jank_format = 'llHHI'
