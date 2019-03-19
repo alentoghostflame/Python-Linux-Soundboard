@@ -11,15 +11,16 @@ from dictionaries import KEY_CODES
 
 def start_input_controller():
     """
-    If there is something in the event_file_location, start up key_detection in a seperate thread.
+    If there is something in the event_file_location, start up key_detection in a separate thread.
+
     Else, don't do anything.
     :return: None
     """
-    if global_variables.input.event_file_location is not None and global_variables.input.key_detection_started is False:
+    if global_variables.input.event_file_location is not None and global_variables.online.key_detector is False:
         log(INFO, "start_input_controller", "Starting Linux key detection.")
         key_detector = threading.Thread(target=key_detection)
         key_detector.start()
-    elif global_variables.input.key_detection_started is True:
+    elif global_variables.online.key_detector is True:
         log(WARNING, "start_input_controller", "Key detection already started, not starting key detection.")
     else:
         log(INFO, "start_input_controller", "event_file_location set to None, not starting key detection.")
@@ -60,7 +61,6 @@ def key_detection():
     except FileNotFoundError:
         raise NotImplementedError
 
-    global_variables.input.key_detection_started = True
     global_variables.online.key_detector = True
 
     # These next 5 lines were taken from StackOverflow (kind of, made some modifications).
@@ -84,7 +84,6 @@ def key_detection():
         if global_variables.misc.quit is True:
             log(INFO, "key_detection_linux", "Shutting down!")
             keyboard_input.close()
-            global_variables.input.key_detection_started = False
             global_variables.online.key_detector = False
             return 0
 
