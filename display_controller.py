@@ -76,6 +76,7 @@ class FrameTopClass:
         """
         input_path = self.entry_event_file.get()
         if input_path == global_variables.input.event_file_location:
+            # Already using the exact same event file.
             message_box = tk.Toplevel(window)
             message_box.title("Error")
             label_text = tk.Label(message_box, text="You are already using this event file!")
@@ -87,6 +88,7 @@ class FrameTopClass:
             try:
                 returned_value = input_controller.event_file_checker(input_path)
             except PermissionError:
+                # Permission issue.
                 message_box = tk.Toplevel(window)
                 message_box.title("Error")
                 label_text = tk.Label(message_box, text="Permission error, attempt to resolve?")
@@ -97,6 +99,7 @@ class FrameTopClass:
                 button_no = tk.Button(message_box, text="No", command=message_box.destroy)
                 button_no.grid(column=1, row=1, padx=5, pady=5)
             except FileNotFoundError:
+                # File doesn't exist.
                 message_box = tk.Toplevel(window)
                 message_box.title("Error")
                 label_text = tk.Label(message_box, text="Event file not found!")
@@ -104,6 +107,7 @@ class FrameTopClass:
                 button_done = tk.Button(message_box, text="OK", command=message_box.destroy)
                 button_done.grid(column=0, row=1, padx=5, pady=5)
             if returned_value is 0:
+                # Successful.
                 global_variables.input.event_file_location = input_path
                 message_box = tk.Toplevel(window)
                 message_box.title("Event file selected")
