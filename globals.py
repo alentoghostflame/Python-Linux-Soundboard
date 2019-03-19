@@ -40,7 +40,6 @@ class GlobalVariablesClass:
         def __init__(self):
             self.main = False
             self.key_detector = False
-            self.input_controller = False
 
     class FileClass:
         """
