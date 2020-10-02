@@ -1,0 +1,4 @@
+.idea/
+venv/
+soundboard_config.yaml
+logs/

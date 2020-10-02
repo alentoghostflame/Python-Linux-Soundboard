@@ -1,6 +1,6 @@
 import configparser as cp
 from os.path import isfile
-from logger import log, INFO  # , WARNING, ERROR
+from bad_old.logger import log, INFO  # , WARNING, ERROR
 '''
 
 The file that contains all the storage locations that will be used in between threads.

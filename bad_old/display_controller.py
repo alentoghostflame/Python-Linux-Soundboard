@@ -1,10 +1,9 @@
 import tkinter as tk
 from time import sleep
-from globals import global_variables, global_config
-import file_controller
-import input_controller
-from audio_controller import audio_logic
-from logger import log, INFO, WARNING, ERROR
+from bad_old.globals import global_variables, global_config
+from bad_old import file_controller, input_controller
+from bad_old.audio_controller import audio_logic
+from bad_old.logger import log, INFO, WARNING, ERROR
 
 
 def run_gui():

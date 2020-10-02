@@ -1,9 +1,9 @@
 import threading
 import subprocess
-import display_controller
+from bad_old import display_controller
 from time import sleep
-from globals import global_variables, global_config
-from logger import log, INFO  # , WARNING, ERROR
+from bad_old.globals import global_variables, global_config
+from bad_old.logger import log, INFO  # , WARNING, ERROR
 
 
 def fix_audio_path(input_path):

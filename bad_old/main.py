@@ -6,11 +6,9 @@ Main.py starts up the program, runs the frontend, and tells the various parts of
 
 """
 from time import sleep
-from globals import global_variables, global_config
-from logger import log, INFO, WARNING, ERROR
-import input_controller
-import audio_controller
-import display_controller
+from bad_old.globals import global_variables, global_config
+from bad_old.logger import log, INFO
+from bad_old import audio_controller, display_controller, input_controller
 
 
 def main():

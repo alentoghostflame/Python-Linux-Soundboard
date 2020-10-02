@@ -1,6 +1,6 @@
 from os import listdir
-from globals import global_variables, global_config
-from logger import log, INFO, WARNING  # , ERROR
+from bad_old.globals import global_variables, global_config
+from bad_old.logger import log, INFO, WARNING  # , ERROR
 
 
 def refresh_files():

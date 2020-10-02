@@ -6,6 +6,8 @@ I couldn't find any soundboards compatable with Linux that fit my standards, so 
 ## Requirments
 `Pulseaudio`, `TKinter`, and Python 3. The commands used in this are `pactl` and `paplay` to create an audio device and to stream audio to the audio device, and `Tkinter` is used to make the GUI. All this was written in Python 3. A soft requirement is `pavucontrol` to set an application to listen to the monitor of PythonSoundboardOutput (AKA PythonSoundboardOutput.monitor)
 
+
+`sudo nano /etc/openal/alsoft.conf` change `#allow-moves=false` to `allow-moves=true`
 ## Quick Feature List
 * Supports (theoretically) unlimited amounts of folders and (theoretically) unlimited amounts of audio files.
 * Use buttons on GUI to switch folders and play the first 9 audio files.
@@ -66,3 +68,9 @@ Pulseaudio can't play every single type of audio file. The currently tested and 
 If you have any questions, concerns, ideas, etc, make an issue for it! I'm all up for recommendations on how to make this better.
 
 
+## HOLY BATMAN THIS IS TEMPORARY ##
+`sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0`
+
+`sudo apt install libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-dev gir1.2-gtk-3.0`
+`pip3 install pycairo`
+`pip3 install PyGObject`
