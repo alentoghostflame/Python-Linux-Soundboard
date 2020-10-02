@@ -2,3 +2,5 @@
 venv/
 soundboard_config.yaml
 logs/
+__pycache__/
+*.pyc

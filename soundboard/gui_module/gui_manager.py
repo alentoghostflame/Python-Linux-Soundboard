@@ -1,4 +1,4 @@
-from soundboard.storage_module import StorageManager
+from soundboard.storage_module import StorageManager, SoundboardConfig
 from soundboard.audio_module import AudioManager
 from typing import List, Optional
 import tkinter as tk
@@ -9,7 +9,8 @@ logger = logging.getLogger("soundboard")
 
 
 class SoundboardWindow:
-    def __init__(self, storage: StorageManager, audio: AudioManager):
+    def __init__(self, config: SoundboardConfig, storage: StorageManager, audio: AudioManager):
+        self._config: SoundboardConfig = config
         self._storage: StorageManager = storage
         self._data: SoundboardData = SoundboardData(storage)
         self._audio: AudioManager = audio
@@ -18,7 +19,7 @@ class SoundboardWindow:
         self.file_list = FileListFrame(self._window, self._storage, self._audio, self._data)
         self.folder_list = FolderListFrame(self._window, self._storage, self._data, self.file_list)
         self.audio_buttons = AudioButtonsFrame(self._window, self._storage, self._audio, self._data)
-        self.top_bar = TopBarFrame(self._window, self._storage, self._data, self._audio, self.folder_list,
+        self.top_bar = TopBarFrame(self._window, self._config, self._storage, self._data, self._audio, self.folder_list,
                                    self.file_list)
 
     def _setup_children(self):
@@ -208,16 +209,25 @@ class AudioButton(tk.Button):
 
 
 class TopBarFrame(tk.Frame):
-    def __init__(self, window: tk.Tk, storage: StorageManager, data: SoundboardData, audio: AudioManager,
-                 folder_list: FolderListFrame, file_list: FileListFrame):
+    def __init__(self, window: tk.Tk, config: SoundboardConfig, storage: StorageManager, data: SoundboardData,
+                 audio: AudioManager, folder_list: FolderListFrame, file_list: FileListFrame):
         tk.Frame.__init__(self, window)
+        self._config = config
         self.audio = audio
         self.buttons = TopBarButtonFrame(self, storage, data, folder_list, file_list)
+        self.buttons.grid(column=0, row=0, sticky=tk.NW)
         self.audio_count = tk.Label(self, text="Audio Thread Count: [PH] / [PH]")
+
+        self._setup_layout()
 
     def _setup_layout(self):
         self.columnconfigure(0, weight=1)
         self.audio_count.grid(column=3, row=0, padx=5, pady=5, sticky=tk.E)
+        self.update_audio_count()
+
+    def update_audio_count(self):
+        self.audio_count.config(text=f"Audio Thread Count: {self.audio.get_audio_count()} / {self._config.max_sounds}")
+        self.after(50, self.update_audio_count)
 
 
 class TopBarButtonFrame(tk.Frame):
@@ -228,7 +238,6 @@ class TopBarButtonFrame(tk.Frame):
         self._data = data
         self._folder_list = folder_list
         self._file_list = file_list
-        self.grid(column=0, row=0, sticky=tk.NW)
 
         self.refresh_button = tk.Button(self, text="Refresh Files", command=self.refresh_files)
         self.refresh_button.grid(column=0, row=0, padx=5, pady=5, sticky=tk.W)

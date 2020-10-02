@@ -34,7 +34,7 @@ class PythonSoundboard:
         self._config = SoundboardConfig()
         self._storage: StorageManager = StorageManager(self._config)
         self.audio: AudioManager = AudioManager(self._config, self._storage)
-        self._sb_window: SoundboardWindow = SoundboardWindow(self._storage, self.audio)
+        self._sb_window: SoundboardWindow = SoundboardWindow(self._config, self._storage, self.audio)
 
     def setup(self):
         setup_logging()

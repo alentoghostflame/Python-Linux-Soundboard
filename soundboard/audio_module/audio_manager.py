@@ -1,6 +1,6 @@
 from soundboard.storage_module import SoundboardConfig, StorageManager
 from openal import oalOpen, oalQuit
-from openal import Source as OALSource
+from openal import Source as OALSource, AL_STOPPED
 from pathlib import Path
 from typing import List, Optional
 import logging
@@ -16,6 +16,7 @@ class AudioManager:
         self._audio_threads: List[OALSource] = list()
 
     def get_audio_count(self) -> int:
+        self.clean_sounds()
         return len(self._audio_threads)
 
     def play_sound(self, file_path: Path):
@@ -27,6 +28,12 @@ class AudioManager:
     def stop_sounds(self):
         for openal_thread in self._audio_threads:
             openal_thread.stop()
+        self.clean_sounds()
+
+    def clean_sounds(self):
+        for thread in self._audio_threads.copy():
+            if thread.get_state() == AL_STOPPED:
+                self._audio_threads.remove(thread)
 
     def exit(self):
         oalQuit()
