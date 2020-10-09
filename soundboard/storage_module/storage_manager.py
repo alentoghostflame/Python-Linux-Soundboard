@@ -14,12 +14,15 @@ class StorageManager:
         self._config: SoundboardConfig = config
         self._root_folder: str = self._config.default_sound_folder
 
+        self._discovered_input_files: List[Path] = list()
+
         self._discovered_sounds: Dict[Path, List[Path]] = dict()
         self._mapped_folders: List[Path] = list()
         self._mapped_sounds: Dict[Path, Dict[int, Path]] = dict()
 
     def reset_sounds(self):
         logger.debug("Resetting discovered folders and sounds.")
+        self._discovered_input_files = list()
         self._discovered_sounds = dict()
         self._mapped_folders = list()
         self._mapped_sounds = dict()
@@ -28,6 +31,7 @@ class StorageManager:
         logger.debug("Discovering sounds.")
         self._discover_folders()
         self._search_folders()
+        self.discover_input_files()
         return self._discovered_sounds
 
     def map(self):
@@ -55,6 +59,15 @@ class StorageManager:
             return self._mapped_sounds[self._mapped_folders[folder]][index]
         else:
             return None
+
+    def str_to_input(self, string: str) -> Optional[Path]:
+        for path in self.get_input_files():
+            if path.name.lower() == string.lower():
+                return path
+        return None
+
+    def get_input_files(self) -> List[Path]:
+        return deepcopy(self._discovered_input_files)
 
     def _discover_folders(self):
         root_folder = Path(self._root_folder)
@@ -96,3 +109,8 @@ class StorageManager:
                     self._mapped_sounds[folder][i] = sound_path
                     logger.debug(f"Mapped {folder.name}[{i}] to {sound_path.name}")
                     break
+
+    def discover_input_files(self):
+        for possible_file in Path("/dev/input/by-id").iterdir():
+            if possible_file.is_symlink():
+                self._discovered_input_files.append(possible_file)

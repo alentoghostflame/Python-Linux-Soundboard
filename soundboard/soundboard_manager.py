@@ -1,6 +1,7 @@
 from soundboard.storage_module import SoundboardConfig, StorageManager
 from soundboard.gui_module import SoundboardWindow
 from soundboard.audio_module import AudioManager
+from soundboard.input_module import InputManager
 import logging
 import sys
 import os
@@ -33,8 +34,11 @@ class PythonSoundboard:
     def __init__(self):
         self._config = SoundboardConfig()
         self._storage: StorageManager = StorageManager(self._config)
-        self.audio: AudioManager = AudioManager(self._config, self._storage)
-        self._sb_window: SoundboardWindow = SoundboardWindow(self._config, self._storage, self.audio)
+        self._audio: AudioManager = AudioManager(self._config, self._storage)
+        self._input: InputManager = InputManager(self._storage, self._audio)
+        self._sb_window: SoundboardWindow = SoundboardWindow(self._config, self._storage, self._audio, self._input)
+        self._input.set_gui(self._sb_window)
+        self._input.start()
 
     def setup(self):
         setup_logging()
@@ -50,5 +54,6 @@ class PythonSoundboard:
         self._sb_window.run()
 
     def save(self):
-        self.audio.exit()
+        self._audio.exit()
         self._config.save()
+        self._input.stop()

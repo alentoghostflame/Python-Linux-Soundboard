@@ -33,6 +33,7 @@ class AudioManager:
     def clean_sounds(self):
         for thread in self._audio_threads.copy():
             if thread.get_state() == AL_STOPPED:
+                thread.destroy()
                 self._audio_threads.remove(thread)
 
     def exit(self):
