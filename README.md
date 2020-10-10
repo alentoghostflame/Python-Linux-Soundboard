@@ -17,16 +17,13 @@ Install `pavucontrol` on Ubuntu by doing `sudo apt install pavucontrol`
 Install [Pulseaudio-Loopback-Tool](https://github.com/alentoghostflame/Python-Pulseaudio-Loopback-Tool) by clicking the
 link and downloading that project.
 
-
-
 ## Quick Feature List
 * Supports (theoretically) unlimited amounts of folders and (theoretically) unlimited amounts of audio files.
-* Use buttons on GUI to switch folders and play the first 9 audio files.
+* Use buttons on the GUI to switch folders and play the first 9 mapped audio files.
 * Click on the lists to switch folders and play any audio file.
-* Use numpad keys to switch folders and play sounds no matter what application you have selected! (If event file is given)
+* Use numpad keys to switch folders and play sounds no matter what application you have selected!
 * Multiple audio threads allowing for multiple different or same sounds to play at once!
 * Ability to instantly kill all outgoing audio.
-
 
 ## Setting up for first use
 Clean way: follow steps normally.  
@@ -63,6 +60,10 @@ Top middle of the soundboard is a pulldown. In the pulldown is all the input dev
 `/dev/input/by-id`. Select the keyboard that you want the soundboard to listen to, press the "Use Event File" button, 
 and the numpad on the keyboard should now trigger the soundboard buttons.
 
+### ...increase the maximum audio thread count?
+Ten not enough for you? Edit `soundboard_config.yaml` with any text editor and change `max_sounds` from 10 to whatever
+number you want. Increasing this number will not decrease performance, it's playing many sounds at once that will.
+
 ### ...make applications listen to this?
 Using `pavucontrol` you can set the soundboard to output to any available sink, and sinks can be created by PALT. 
 (PulseAudio-Looback-Tool)
@@ -74,7 +75,7 @@ Ideally, you'd have the following basic setup:
 
 ### ...change the root folder?
 If you haven't run the soundboard yet, run it once to create the config file.  
-Edit `soundboard_config.yaml` with any text editor, and change "Sound Files" to the path of the desired root folder, 
+Edit `soundboard_config.yaml` with any text editor and change "Sound Files" to the path of the desired root folder, 
 either relative to where you are executing `start.py` or absolute.
 
 ### ...add more sub-folders?
@@ -84,6 +85,7 @@ There is (theoretically) no limit to how many different folders you can have.
 
 ### ...add more audio files?
 Put audio files into into the sub-folders. Just like the folders, it's alphabetically sorted in the list.  
+Again, there is (theoretically) no limit to how many different audio files you can have.
 
 ### ...map an audio file to a button?
 Rename the sound file to have a number and a space at the beginning of the filename, with the number being what
