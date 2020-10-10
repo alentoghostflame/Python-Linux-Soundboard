@@ -1,5 +1,5 @@
 # Python-Linux-Soundboard
-I couldn't find any soundboards compatable with Linux that fit my standards, so I made my own that uses the numpad.
+I couldn't find any soundboards compatible with Linux that fit my standards, so I made my own that uses the numpad.
 
 ![alt text](https://i.imgur.com/OBjysfk.png "Screenshot")
 
